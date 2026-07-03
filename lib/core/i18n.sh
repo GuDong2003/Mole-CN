@@ -15,7 +15,9 @@ __mole_resolve_lang() {
 
     # 1. Env var override
     if [[ -n "${MO_LANG:-}" ]]; then
-        case "${MO_LANG,,}" in
+        local lang_lower
+        lang_lower=$(printf '%s' "$MO_LANG" | tr '[:upper:]' '[:lower:]')
+        case "$lang_lower" in
             zh | zh-cn | zh_cn | chinese | cn) MOLE_LANG="zh" ;;
         esac
     fi
@@ -57,7 +59,9 @@ mo_set_lang() {
     local lang_file="${MOLE_CONFIG_DIR:-$HOME/.config/mole}/lang"
     ensure_user_dir "$(dirname "$lang_file")"
 
-    case "${new_lang,,}" in
+    local lang_lower
+    lang_lower=$(printf '%s' "$new_lang" | tr '[:upper:]' '[:lower:]')
+    case "$lang_lower" in
         zh | zh-cn | chinese | cn)
             echo "zh" > "$lang_file"
             echo "语言已设置为中文"

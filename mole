@@ -388,9 +388,9 @@ show_help() {
     printf "  %s%-28s%s %s\n" "$GREEN" "mo analyze /Volumes" "$NC" "$(t "Analyze external drives only" "仅分析外置磁盘")"
     printf "  %s%-28s%s %s\n" "$GREEN" "mo update --force" "$NC" "$(t "Force reinstall latest stable version" "强制重装最新稳定版")"
     printf "  %s%-28s%s %s\n" "$GREEN" "mo update --nightly" "$NC" "$(t "Install latest unreleased main branch build" "安装最新开发版")"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo remove --dry-run" "$NC" "Preview Mole removal"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo remove --dry-run" "$NC" "$(t "Preview Mole removal" "预览卸载 Mole")"
     echo
-    printf "%s%s%s\n" "$BLUE" "OPTIONS" "$NC"
+    printf "%s%s%s\n" "$BLUE" "$(t "OPTIONS" "选项")" "$NC"
     printf "  %s%-28s%s %s\n" "$GREEN" "--debug" "$NC" "$(t "Show detailed operation logs" "显示详细操作日志")"
     echo
 }
@@ -921,11 +921,11 @@ show_main_menu() {
 
     printf '\r\033[2K\n'
 
-    printf '\r\033[2K%s\n' "$(show_menu_option 1 "$(t "Clean        Free up disk space" "清理        释放磁盘空间")" "$([[ $selected -eq 1 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 2 "$(t "Uninstall    Remove apps completely" "卸载        彻底删除应用")" "$([[ $selected -eq 2 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 3 "$(t "Optimize     Refresh caches and services" "优化        刷新缓存与服务")" "$([[ $selected -eq 3 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 4 "$(t "Analyze      Explore disk usage" "磁盘分析    可视化磁盘占用")" "$([[ $selected -eq 4 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 5 "$(t "Status       Monitor system health" "系统状态    实时系统监控")" "$([[ $selected -eq 5 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 1 "$(t "Clean        Free up disk space" "清理           释放磁盘空间")" "$([[ $selected -eq 1 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 2 "$(t "Uninstall    Remove apps completely" "卸载           彻底删除应用")" "$([[ $selected -eq 2 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 3 "$(t "Optimize     Refresh caches and services" "优化           刷新缓存与服务")" "$([[ $selected -eq 3 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 4 "$(t "Analyze      Explore disk usage" "磁盘分析       可视化磁盘占用")" "$([[ $selected -eq 4 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 5 "$(t "Status       Monitor system health" "系统状态       实时系统监控")" "$([[ $selected -eq 5 ]] && echo true || echo false)")"
 
     if [[ -t 0 ]]; then
         printf '\r\033[2K\n'
