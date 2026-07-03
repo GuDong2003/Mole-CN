@@ -20,7 +20,7 @@ clean_trash() {
 
     if [[ "$DRY_RUN" == "true" ]]; then
         if [[ $trash_count -gt 0 ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Trash · would empty, $trash_count items"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Trash · would empty, $trash_count $(t "items" "项")"
         else
             echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Trash · already empty"
         fi
@@ -46,7 +46,7 @@ clean_trash() {
     [[ -t 1 ]] && stop_inline_spinner
 
     if [[ $cleaned_count -gt 0 ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Trash · emptied, $cleaned_count items"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Trash · emptied, $cleaned_count $(t "items" "项")"
         note_activity
     fi
 }
@@ -109,7 +109,7 @@ _clean_incomplete_downloads() {
         for f in $pattern; do
             [[ -e "$f" ]] || continue
             if lsof -F n -- "$f" > /dev/null 2>&1; then
-                echo -e "  ${GRAY}${ICON_WARNING}${NC} Skipping active download: $(basename "$f")"
+                echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Skipping active download: $(basename" "跳过 active download: $(basename") "$f")"
                 continue
             fi
             safe_clean "$f" "$label" || true
@@ -172,7 +172,7 @@ _clean_mail_downloads() {
     if [[ $count -gt 0 ]]; then
         local cleaned_mb
         cleaned_mb=$(echo "$cleaned_kb" | awk '{printf "%.1f", $1/1024}' || echo "0.0")
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Cleaned $count mail attachments older than ${mail_age_days}d, about ${cleaned_mb}MB"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Cleaned" "已清理") $count mail attachments older than ${mail_age_days}d, about ${cleaned_mb}MB"
         note_activity
     fi
 }
@@ -352,7 +352,7 @@ clean_chrome_old_versions() {
     fi
 
     if is_google_chrome_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Google Chrome running · old versions cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Google Chrome running · old versions cleanup skipped" "Google Chrome 正在运行 · 旧版本清理跳过")"
         return 0
     fi
 
@@ -377,7 +377,7 @@ clean_chrome_old_versions() {
         # Verify the Current symlink target exists. If broken, skip to avoid
         # accidentally deleting the active browser version.
         if [[ ! -d "$versions_dir/$current_version" ]]; then
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Chrome Current symlink is broken · skipping version cleanup"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Chrome Current symlink is broken · skipping version cleanup" "Chrome 当前符号链接已损坏 · 跳过版本清理")"
             continue
         fi
 
@@ -441,11 +441,11 @@ clean_chrome_old_versions() {
         local size_human
         size_human=$(bytes_to_human "$((total_size * 1024))")
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Chrome old versions${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Chrome old versions" "Chrome 旧版本")${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
         else
             local line_color
             line_color=$(cleanup_result_color_kb "$total_size")
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Chrome old versions${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Chrome old versions" "Chrome 旧版本")${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
         fi
         files_cleaned=$((files_cleaned + cleaned_count))
         total_size_cleaned=$((total_size_cleaned + total_size))
@@ -469,7 +469,7 @@ clean_edge_old_versions() {
 
     # Match the exact Edge process name to avoid false positives (e.g., Microsoft Teams)
     if pgrep -x "Microsoft Edge" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Microsoft Edge running · old versions cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Microsoft Edge running · old versions cleanup skipped" "Microsoft Edge 正在运行 · 旧版本清理跳过")"
         return 0
     fi
 
@@ -494,7 +494,7 @@ clean_edge_old_versions() {
         # Verify the Current symlink target exists. If broken, skip to avoid
         # accidentally deleting the active browser version.
         if [[ ! -d "$versions_dir/$current_version" ]]; then
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Edge Current symlink is broken · skipping version cleanup"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Edge Current symlink is broken · skipping version cleanup" "Edge 当前符号链接已损坏 · 跳过版本清理")"
             continue
         fi
 
@@ -536,11 +536,11 @@ clean_edge_old_versions() {
         local size_human
         size_human=$(bytes_to_human "$((total_size * 1024))")
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Edge old versions${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Edge old versions" "Edge 旧版本")${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
         else
             local line_color
             line_color=$(cleanup_result_color_kb "$total_size")
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Edge old versions${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Edge old versions" "Edge 旧版本")${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
         fi
         files_cleaned=$((files_cleaned + cleaned_count))
         total_size_cleaned=$((total_size_cleaned + total_size))
@@ -555,7 +555,7 @@ clean_edge_updater_old_versions() {
     [[ -d "$updater_dir" ]] || return 0
 
     if pgrep -x "Microsoft Edge" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Microsoft Edge running · updater cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Microsoft Edge running · updater cleanup skipped" "Microsoft Edge 正在运行 · 更新程序清理跳过")"
         return 0
     fi
 
@@ -600,11 +600,11 @@ clean_edge_updater_old_versions() {
         local size_human
         size_human=$(bytes_to_human "$((total_size * 1024))")
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Edge updater old versions${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Edge updater old versions" "Edge 更新程序旧版本")${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
         else
             local line_color
             line_color=$(cleanup_result_color_kb "$total_size")
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Edge updater old versions${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Edge updater old versions" "Edge 更新程序旧版本")${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
         fi
         files_cleaned=$((files_cleaned + cleaned_count))
         total_size_cleaned=$((total_size_cleaned + total_size))
@@ -627,7 +627,7 @@ clean_brave_old_versions() {
 
     # Match the exact Brave process name to avoid false positives
     if pgrep -x "Brave Browser" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Brave Browser running · old versions cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Brave Browser running · old versions cleanup skipped" "Brave 浏览器正在运行 · 旧版本清理跳过")"
         return 0
     fi
 
@@ -650,7 +650,7 @@ clean_brave_old_versions() {
         [[ -n "$current_version" ]] || continue
 
         if [[ ! -d "$versions_dir/$current_version" ]]; then
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Brave Browser Current symlink is broken · skipping version cleanup"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Brave Browser Current symlink is broken · skipping version cleanup" "Brave 浏览器当前符号链接已损坏 · 跳过版本清理")"
             continue
         fi
 
@@ -692,11 +692,11 @@ clean_brave_old_versions() {
         local size_human
         size_human=$(bytes_to_human "$((total_size * 1024))")
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Brave old versions${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Brave old versions" "Brave 旧版本")${NC}, ${YELLOW}${cleaned_count} dirs, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
         else
             local line_color
             line_color=$(cleanup_result_color_kb "$total_size")
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Brave old versions${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Brave old versions" "Brave 旧版本")${NC}, ${line_color}${cleaned_count} dirs, $size_human${NC}"
         fi
         files_cleaned=$((files_cleaned + cleaned_count))
         total_size_cleaned=$((total_size_cleaned + total_size))
@@ -873,7 +873,7 @@ clean_app_caches() {
     if [[ "$found_any" == "true" ]]; then
         if [[ "$DRY_RUN" == "true" ]]; then
             if [[ "$total_size_partial" == "true" ]]; then
-                echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Sandboxed app caches${NC}, ${YELLOW}dry${NC}"
+                echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Sandboxed app caches${NC}, ${YELLOW}$(t "dry" "预览")${NC}"
             else
                 local size_human
                 size_human=$(bytes_to_human "$((total_size * 1024))")
@@ -881,7 +881,7 @@ clean_app_caches() {
             fi
         else
             if [[ "$total_size_partial" == "true" ]]; then
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Sandboxed app caches${NC}, ${GREEN}cleaned${NC}"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Sandboxed app caches${NC}, ${GREEN}$(t "cleaned" "已清理")${NC}"
             else
                 local size_human
                 size_human=$(bytes_to_human "$((total_size * 1024))")
@@ -1100,7 +1100,7 @@ clean_group_container_caches() {
     if [[ "$found_any" == "true" ]]; then
         if [[ "$DRY_RUN" == "true" ]]; then
             if [[ "$total_size_partial" == "true" ]]; then
-                echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Group Containers logs/caches${NC}, ${YELLOW}dry${NC}"
+                echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Group Containers logs/caches${NC}, ${YELLOW}$(t "dry" "预览")${NC}"
             else
                 local size_human
                 size_human=$(bytes_to_human "$((total_size * 1024))")
@@ -1108,7 +1108,7 @@ clean_group_container_caches() {
             fi
         else
             if [[ "$total_size_partial" == "true" ]]; then
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Group Containers logs/caches${NC}, ${GREEN}cleaned${NC}"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Group Containers logs/caches${NC}, ${GREEN}$(t "cleaned" "已清理")${NC}"
             else
                 local size_human
                 size_human=$(bytes_to_human "$((total_size * 1024))")
@@ -1318,7 +1318,7 @@ clean_browsers() {
         safe_clean ~/Library/Application\ Support/Google/Chrome/GraphiteDawnCache/* "Chrome Dawn cache"
         safe_clean ~/Library/Application\ Support/Google/Chrome/Crashpad/completed/* "Chrome crash reports"
     else
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Chrome is running · Application Support cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Chrome is running · Application Support cache cleanup skipped" "Chrome 正在运行 · Application Support 缓存清理跳过")"
     fi
     local _chrome_profile
     for _chrome_profile in "$HOME/Library/Application Support/Google/Chrome"/*/; do
@@ -1412,7 +1412,7 @@ clean_browsers() {
         firefox_running=true
     fi
     if [[ "$firefox_running" == "true" ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Firefox is running · cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Firefox is running · cache cleanup skipped" "Firefox 正在运行 · 缓存清理跳过")"
     else
         safe_clean ~/Library/Caches/Firefox/* "Firefox cache"
     fi
@@ -1442,7 +1442,7 @@ clean_browsers() {
     safe_clean ~/Library/Caches/com.kagi.kagimacOS/* "Orion cache"
     safe_clean ~/Library/Caches/zen/* "Zen cache"
     if [[ "$firefox_running" == "true" ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Firefox is running · profile cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Firefox is running · profile cache cleanup skipped" "Firefox 正在运行 · 配置文件缓存清理跳过")"
     else
         safe_clean ~/Library/Application\ Support/Firefox/Profiles/*/cache2/* "Firefox profile cache"
     fi
@@ -1473,13 +1473,13 @@ clean_cloud_storage() {
         echo "[DEBUG] Cleaning cloud storage caches..." >&2
     fi
     if pgrep -x "Dropbox" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Dropbox is running · cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Dropbox is running · cache cleanup skipped" "Dropbox 正在运行 · 缓存清理跳过")"
     else
         safe_clean ~/Library/Caches/com.dropbox.* "Dropbox cache"
         safe_clean ~/Library/Caches/com.getdropbox.dropbox "Dropbox cache"
     fi
     if pgrep -x "Google Drive" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Google Drive is running · cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Google Drive is running · cache cleanup skipped" "Google Drive 正在运行 · 缓存清理跳过")"
     else
         safe_clean ~/Library/Caches/com.google.GoogleDrive "Google Drive cache"
     fi
@@ -1487,7 +1487,7 @@ clean_cloud_storage() {
     safe_clean ~/Library/Caches/com.alibaba.teambitiondisk "Alibaba Cloud cache"
     safe_clean ~/Library/Caches/com.box.desktop "Box cache"
     if pgrep -x "OneDrive" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} OneDrive is running · cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "OneDrive is running · cache cleanup skipped" "OneDrive 正在运行 · 缓存清理跳过")"
     else
         safe_clean ~/Library/Caches/com.microsoft.OneDrive "OneDrive cache"
     fi
@@ -2063,8 +2063,8 @@ check_large_file_candidates() {
         if [[ -n "$snapshot_list" ]]; then
             snapshot_count=$(echo "$snapshot_list" | { grep -Eo 'com\.apple\.TimeMachine\.[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{6}' || true; } | wc -l | awk '{print $1}')
             if [[ "$snapshot_count" =~ ^[0-9]+$ && "$snapshot_count" -gt 0 ]]; then
-                echo -e "  ${YELLOW}${ICON_WARNING}${NC} Time Machine local snapshots: ${GREEN}${snapshot_count}${NC}"
-                echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Review: tmutil listlocalsnapshots /${NC}"
+                echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Time Machine local snapshots:" "Time Machine 本地快照：") ${GREEN}${snapshot_count}${NC}"
+                echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Review: tmutil listlocalsnapshots /" "查看：tmutil listlocalsnapshots /")${NC}"
                 found_any=true
             fi
         fi
@@ -2074,7 +2074,7 @@ check_large_file_candidates() {
         local docker_output
         docker_output=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker system df --format '{{.Type}}\t{{.Size}}\t{{.Reclaimable}}' 2> /dev/null || true)
         if [[ -n "$docker_output" ]]; then
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Docker storage:"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Docker storage:" "Docker 存储：")"
             while IFS=$'\t' read -r dtype dsize dreclaim; do
                 [[ -z "$dtype" ]] && continue
                 echo -e "    ${GRAY}${ICON_LIST} $dtype: $dsize, Reclaimable: $dreclaim${NC}"
@@ -2083,8 +2083,8 @@ check_large_file_candidates() {
         else
             docker_output=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker system df 2> /dev/null || true)
             if [[ -n "$docker_output" ]]; then
-                echo -e "  ${YELLOW}${ICON_WARNING}${NC} Docker storage:"
-                echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Run: docker system df${NC}"
+                echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Docker storage:" "Docker 存储：")"
+                echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Run: docker system df" "运行：docker system df")${NC}"
                 found_any=true
             fi
         fi
@@ -2104,7 +2104,7 @@ check_large_file_candidates() {
     _report_large_review_dir "Anaconda packages (review only)" "$HOME/anaconda3/pkgs"
 
     if [[ "$found_any" == "false" ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No large items detected in common locations"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No large items detected in common locations" "常见位置未发现大文件")"
     fi
 
     unset -f _large_candidate_size_kb _report_large_review_dir

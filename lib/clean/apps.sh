@@ -50,7 +50,7 @@ clean_ds_store_tree() {
         size_human=$(bytes_to_human "$total_bytes")
         local size_kb=$(((total_bytes + 1023) / 1024))
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $label${NC}, ${YELLOW}$file_count files, $size_human dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $label${NC}, ${YELLOW}$file_count files, $size_human $(t "dry" "预览")${NC}"
         else
             local line_color
             line_color=$(cleanup_result_color_kb "$size_kb")
@@ -323,7 +323,7 @@ clean_orphaned_app_data() {
     scan_installed_apps "$installed_bundles"
     stop_section_spinner
     local app_count=$(wc -l < "$installed_bundles" 2> /dev/null | tr -d ' ')
-    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Found $app_count active/installed apps"
+    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Found" "已找到") $app_count active/installed apps"
     local orphaned_count=0
     local total_orphaned_kb=0
     start_section_spinner "Scanning orphaned app resources..."
@@ -420,7 +420,7 @@ clean_orphaned_app_data() {
     stop_section_spinner
     if [[ $orphaned_count -gt 0 ]]; then
         local orphaned_mb=$(echo "$total_orphaned_kb" | awk '{printf "%.1f", $1/1024}')
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Cleaned $orphaned_count items, about ${orphaned_mb}MB"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Cleaned" "已清理") $orphaned_count $(t "items, about" "项，约") ${orphaned_mb}MB"
         note_activity
     fi
     rm -f "$installed_bundles"
@@ -755,7 +755,7 @@ clean_orphaned_system_services() {
 
     # Report and clean
     if [[ $orphaned_count -gt 0 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Found $orphaned_count orphaned system services"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Found" "已找到") $orphaned_count orphaned system services"
 
         local removed_count=0
         local skipped_protected_count=0
@@ -807,7 +807,7 @@ clean_orphaned_system_services() {
         fi
         if [[ "${DRY_RUN:-false}" != "true" ]]; then
             if [[ $removed_count -gt 0 ]]; then
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Cleaned $removed_count orphaned services, about $orphaned_kb_display"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Cleaned" "已清理") $removed_count orphaned services, about $orphaned_kb_display"
                 note_activity
             fi
         fi
@@ -817,7 +817,7 @@ clean_orphaned_system_services() {
         # skipped them, leaving the user confused about which files actually
         # disappeared.
         if [[ $skipped_protected_count -gt 0 || $failed_count -gt 0 ]]; then
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Orphaned services skipped $skipped_protected_count protected, failed $failed_count"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Orphaned services skipped" "Orphaned services 已跳过") $skipped_protected_count protected, failed $failed_count"
         fi
     fi
 
@@ -957,7 +957,7 @@ clean_orphaned_container_stubs() {
         if [[ "$DRY_RUN" == "true" ]]; then
             echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Orphaned app container stubs, ${YELLOW}${removed_count} stubs dry${NC}"
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Orphaned app container stubs, ${GREEN}${removed_count} removed${NC}"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Orphaned app container stubs, ${GREEN}${removed_count} $(t "removed" "已移除")${NC}"
             note_activity
         fi
         files_cleaned=$((files_cleaned + removed_count))

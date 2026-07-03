@@ -39,7 +39,7 @@ clean_homebrew() {
             if [[ $dry_run_autoremove_exit -eq 0 ]] && brew_autoremove_preview_has_items "$dry_run_autoremove_file"; then
                 show_brew_autoremove_preview "$dry_run_autoremove_file"
             elif [[ $dry_run_autoremove_exit -eq 124 ]]; then
-                echo -e "  ${GRAY}${ICON_WARNING}${NC} Autoremove preview timed out · run ${GRAY}brew autoremove --dry-run${NC} manually"
+                echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Autoremove preview timed out · run" "自动移除预览超时 · 运行") ${GRAY}brew autoremove --dry-run${NC} $(t "manually" "手动")"
             fi
         fi
         return 0
@@ -62,7 +62,7 @@ clean_homebrew() {
         local days_diff=$((time_diff / 86400))
         if [[ $days_diff -lt $cache_valid_days ]]; then
             should_skip=true
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew · cleaned ${days_diff}d ago, skipped"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew · cleaned ${days_diff}$(t "d ago, skipped" "天前，已跳过")"
         fi
     fi
     [[ "$should_skip" == "true" ]] && return 0
@@ -96,7 +96,7 @@ clean_homebrew() {
     if [[ "$skip_cleanup" == "true" ]]; then
         # Cleanup was skipped due to small cache size
         local size_mb=$((brew_cache_size / 1024))
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew cleanup · cache ${size_mb}MB, skipped"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew cleanup · cache ${size_mb}$(t "MB, skipped" "MB, 已跳过")"
     elif [[ "$brew_success" == "true" && -f "$brew_tmp_file" ]]; then
         local brew_output
         brew_output=$(cat "$brew_tmp_file" 2> /dev/null || echo "")
@@ -105,25 +105,25 @@ clean_homebrew() {
         freed_space=$(printf '%s\n' "$brew_output" | grep -o "[0-9.]*[KMGT]B freed" 2> /dev/null | tail -1 || true)
         if [[ $removed_count -gt 0 ]] || [[ -n "$freed_space" ]]; then
             if [[ -n "$freed_space" ]]; then
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew cleanup${NC}, ${GREEN}$freed_space${NC}"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Homebrew cleanup" "Homebrew 清理")${NC}, ${GREEN}$freed_space${NC}"
             else
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew cleanup, ${removed_count} items"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew cleanup, ${removed_count} $(t "items" "项")"
             fi
         fi
     elif [[ $brew_exit -eq 124 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Homebrew cleanup timed out · run ${GRAY}brew cleanup${NC} manually"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} Homebrew cleanup timed out · run ${GRAY}brew cleanup${NC} $(t "manually" "手动")"
     fi
     local autoremove_preview_file
     autoremove_preview_file=$(create_temp_file)
     local autoremove_preview_exit=0
     run_brew_autoremove_preview "$autoremove_preview_timeout" "$autoremove_preview_file" || autoremove_preview_exit=$?
     if [[ $autoremove_preview_exit -eq 124 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Autoremove preview timed out · run ${GRAY}brew autoremove --dry-run${NC} manually"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Autoremove preview timed out · run" "自动移除预览超时 · 运行") ${GRAY}brew autoremove --dry-run${NC} $(t "manually" "手动")"
     elif [[ $autoremove_preview_exit -ne 0 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Autoremove preview failed · run ${GRAY}brew autoremove --dry-run${NC} manually"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Autoremove preview failed · run" "自动移除预览失败 · 运行") ${GRAY}brew autoremove --dry-run${NC} $(t "manually" "手动")"
     elif brew_autoremove_preview_has_items "$autoremove_preview_file"; then
         show_brew_autoremove_preview "$autoremove_preview_file"
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Homebrew autoremove skipped · run ${GRAY}brew autoremove${NC} manually"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Homebrew autoremove skipped · run" "Homebrew 自动移除已跳过 · 运行") ${GRAY}brew autoremove${NC} $(t "manually" "手动")"
     fi
     # Update cache timestamp on successful completion or when cleanup was intelligently skipped
     # This prevents repeated cache size checks within the 7-day window

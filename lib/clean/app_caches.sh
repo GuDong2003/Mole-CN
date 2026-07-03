@@ -10,7 +10,7 @@ clean_xcode_derived_data() {
 
     # Skip while Xcode is running to avoid build failures.
     if pgrep -x "Xcode" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode is running, skipping DerivedData cleanup"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode is running, skipping DerivedData cleanup" "Xcode 正在运行，跳过 DerivedData 清理")"
         return 0
     fi
 
@@ -228,7 +228,7 @@ clean_ai_apps() {
     safe_clean ~/Library/Caches/com.lmstudio.lmstudio/* "LM Studio cache"
     safe_clean ~/Library/Caches/CCTClearcutLogger "Google Clearcut logs"
     if [[ -d "$HOME/Library/Application Support/Codex" || -d "$HOME/Library/Logs/com.openai.codex" ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Codex Desktop state · preserved (sessions, credentials)"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Codex Desktop state · preserved (sessions, credentials)" "Codex Desktop 状态 · 已保留（会话、凭据）")"
         note_activity
     fi
 }

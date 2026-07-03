@@ -324,37 +324,37 @@ clean_deep_system() {
 clean_time_machine_failed_backups() {
     local tm_cleaned=0
     if ! command -v tmutil > /dev/null 2>&1; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No incomplete backups found" "未发现不完整备份")"
         return 0
     fi
     # Fast pre-check: skip entirely if Time Machine is not configured (no tmutil needed)
     if ! defaults read /Library/Preferences/com.apple.TimeMachine AutoBackup 2> /dev/null | grep -qE '^[01]$'; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No incomplete backups found" "未发现不完整备份")"
         return 0
     fi
     start_section_spinner "Checking Time Machine configuration..."
     local spinner_active=true
     local tm_info
-    tm_info=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" tmutil destinationinfo 2>&1 || echo "failed")
+    tm_info=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" tmutil destinationinfo 2>&1 || echo "$(t "failed" "失败")")
     if [[ "$tm_info" == *"No destinations configured"* || "$tm_info" == "failed" ]]; then
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No incomplete backups found" "未发现不完整备份")"
         return 0
     fi
     if [[ ! -d "/Volumes" ]]; then
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No incomplete backups found" "未发现不完整备份")"
         return 0
     fi
     if tm_is_running; then
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${YELLOW}!${NC} Time Machine backup in progress, skipping cleanup"
+        echo -e "  ${YELLOW}!${NC} $(t "Time Machine backup in progress, skipping cleanup" "Time Machine 正在备份，跳过清理")"
         return 0
     fi
     if [[ "$spinner_active" == "true" ]]; then
@@ -374,7 +374,7 @@ clean_time_machine_failed_backups() {
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No incomplete backups found" "未发现不完整备份")"
         return 0
     fi
     if [[ "$spinner_active" == "true" ]]; then
@@ -382,7 +382,7 @@ clean_time_machine_failed_backups() {
     fi
     for volume in "${backup_volumes[@]}"; do
         local fs_type
-        fs_type=$(run_with_timeout 1 command df -T "$volume" 2> /dev/null | tail -1 | awk '{print $2}' || echo "unknown") # 1s: volume FS-type probe, see lib/core/timeouts.sh
+        fs_type=$(run_with_timeout 1 command df -T "$volume" 2> /dev/null | tail -1 | awk '{print $2}' || echo "$(t "unknown" "未知")") # 1s: volume FS-type probe, see lib/core/timeouts.sh
         case "$fs_type" in
             nfs | smbfs | afpfs | cifs | webdav | unknown) continue ;;
         esac
@@ -417,7 +417,7 @@ clean_time_machine_failed_backups() {
                     continue
                 fi
                 if ! command -v tmutil > /dev/null 2>&1; then
-                    echo -e "  ${YELLOW}!${NC} tmutil not available, skipping: $backup_name"
+                    echo -e "  ${YELLOW}!${NC} $(t "tmutil not available, skipping:" "tmutil 不可用，跳过：") $backup_name"
                     continue
                 fi
                 if tmutil delete "$inprogress_file" 2> /dev/null; then
@@ -465,7 +465,7 @@ clean_time_machine_failed_backups() {
                     local size_human
                     size_human=$(bytes_to_human "$((size_kb * 1024))")
                     if [[ "$DRY_RUN" == "true" ]]; then
-                        echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Incomplete APFS backup in $bundle_name: $backup_name${NC}, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
+                        echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Incomplete APFS backup in" "不完整 APFS 备份于") $bundle_name: $backup_name${NC}, $(colorize_human_size "$size_human") ${YELLOW}dry${NC}"
                         tm_cleaned=$((tm_cleaned + 1))
                         note_activity
                         continue
@@ -476,7 +476,7 @@ clean_time_machine_failed_backups() {
                     if tmutil delete "$inprogress_file" 2> /dev/null; then
                         local line_color
                         line_color=$(cleanup_result_color_kb "$size_kb")
-                        echo -e "  ${line_color}${ICON_SUCCESS}${NC} Incomplete APFS backup in $bundle_name: $backup_name${NC}, ${line_color}$size_human${NC}"
+                        echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Incomplete APFS backup in" "不完整 APFS 备份于") $bundle_name: $backup_name${NC}, ${line_color}$size_human${NC}"
                         tm_cleaned=$((tm_cleaned + 1))
                         files_cleaned=$((files_cleaned + 1))
                         total_size_cleaned=$((total_size_cleaned + size_kb))
@@ -493,7 +493,7 @@ clean_time_machine_failed_backups() {
         stop_section_spinner
     fi
     if [[ $tm_cleaned -eq 0 ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No incomplete backups found" "未发现不完整备份")"
     fi
 }
 # Returns 0 if a backup is actively running.
@@ -528,13 +528,13 @@ clean_local_snapshots() {
 
     if [[ $rc_running -eq 2 ]]; then
         stop_section_spinner
-        echo -e "  ${YELLOW}!${NC} Could not determine Time Machine status; skipping snapshot check"
+        echo -e "  ${YELLOW}!${NC} $(t "Could not determine Time Machine status; skipping snapshot check" "无法确定 Time Machine 状态，跳过快照检查")"
         return 0
     fi
 
     if [[ $rc_running -eq 0 ]]; then
         stop_section_spinner
-        echo -e "  ${YELLOW}!${NC} Time Machine is active; skipping snapshot check"
+        echo -e "  ${YELLOW}!${NC} $(t "Time Machine is active; skipping snapshot check" "Time Machine 正在运行，跳过快照检查")"
         return 0
     fi
 
@@ -547,8 +547,8 @@ clean_local_snapshots() {
     local snapshot_count
     snapshot_count=$(echo "$snapshot_list" | { grep -Eo 'com\.apple\.TimeMachine\.[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{6}' || true; } | wc -l | awk '{print $1}')
     if [[ "$snapshot_count" =~ ^[0-9]+$ && "$snapshot_count" -gt 0 ]]; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Time Machine local snapshots: ${GREEN}${snapshot_count}${NC}"
-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Review: tmutil listlocalsnapshots /${NC}"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Time Machine local snapshots:" "Time Machine 本地快照：") ${GREEN}${snapshot_count}${NC}"
+        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Review: tmutil listlocalsnapshots /" "查看：tmutil listlocalsnapshots /")${NC}"
         note_activity
     fi
 }

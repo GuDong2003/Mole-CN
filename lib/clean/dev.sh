@@ -16,7 +16,7 @@ clean_tool_cache() {
         if [[ "$DRY_RUN" == "true" ]]; then
             echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $description · would skip (whitelist)"
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $description · skipped (whitelist)"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $description $(t "· skipped (whitelist)" "·  已跳过（白名单）")"
         fi
         return 0
     fi
@@ -100,7 +100,7 @@ clean_conda_metadata_caches() {
         if [[ "$DRY_RUN" == "true" ]]; then
             echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} conda index/tarball/log caches · would skip (whitelist)"
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} conda index/tarball/log caches · skipped (whitelist)"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "conda index/tarball/log caches · skipped (whitelist)" "conda index/tarball/log caches ·  已跳过（白名单）")"
         fi
         return 0
     fi
@@ -209,7 +209,7 @@ clean_dev_npm() {
             if [[ "$bun_dry_run" == "true" ]]; then
                 echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} bun cache · would skip (whitelist)"
             else
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} bun cache · skipped (whitelist)"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "bun cache · skipped (whitelist)" "bun cache ·  已跳过（白名单）")"
             fi
             bun_cache_cleaned=true
         elif [[ "$bun_dry_run" != "true" ]]; then
@@ -298,7 +298,7 @@ clean_dev_go() {
         if [[ "$DRY_RUN" == "true" ]]; then
             echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Go cache · would skip (whitelist)"
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Go cache · skipped (whitelist)"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Go cache · skipped (whitelist)" "Go cache ·  已跳过（白名单）")"
         fi
         return 0
     fi
@@ -307,10 +307,10 @@ clean_dev_go() {
         clean_tool_cache "Go cache" "" bash -c 'go clean -modcache > /dev/null 2>&1 || true; go clean -cache > /dev/null 2>&1 || true'
     elif [[ "$build_protected" == "true" ]]; then
         clean_tool_cache "Go module cache" "" bash -c 'go clean -modcache > /dev/null 2>&1 || true'
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Go build cache · skipped (whitelist)"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Go build cache · skipped (whitelist)" "Go build cache ·  已跳过（白名单）")"
     else
         clean_tool_cache "Go build cache" "" bash -c 'go clean -cache > /dev/null 2>&1 || true'
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Go module cache · skipped (whitelist)"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Go module cache · skipped (whitelist)" "Go module cache ·  已跳过（白名单）")"
     fi
     note_activity
 }
@@ -392,7 +392,7 @@ check_multiple_versions() {
         if [[ -n "$list_cmd" ]]; then
             hint=" · ${GRAY}${list_cmd}${NC}"
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} ${tool_name}: ${count} found${hint}"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} ${tool_name}: ${count} $(t "found" "已找到")${hint}"
     fi
 }
 
@@ -419,9 +419,9 @@ find_orbstack_data_dir() {
 clean_dev_docker() {
     if command -v docker > /dev/null 2>&1; then
         note_activity
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Docker unused data · skipped by default"
-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Review: docker system df${NC}"
-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Prune:  docker system prune --filter until=720h${NC}"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Docker unused data · skipped by default" "Docker 未使用数据 · 默认跳过")"
+        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Review: docker system df" "查看：docker system df")${NC}"
+        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Prune:  docker system prune --filter until=720h" "清理：docker system prune --filter until=720h")${NC}"
         debug_log "Docker daemon-managed cleanup skipped by default"
     fi
 
@@ -435,8 +435,8 @@ clean_dev_docker() {
         fi
         note_activity
         echo -e "  ${GRAY}${ICON_WARNING}${NC} OrbStack container data · skipped by default ($(bytes_to_human $((orb_size * 1024))))"
-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Review: docker system df${NC}"
-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Prune:  docker system prune --filter until=720h${NC}"
+        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Review: docker system df" "查看：docker system df")${NC}"
+        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Prune:  docker system prune --filter until=720h" "清理：docker system prune --filter until=720h")${NC}"
         debug_log "OrbStack daemon-managed data left for manual prune ($orb_size KB)"
     fi
     safe_clean ~/.docker/buildx/cache/* "Docker BuildX cache"
@@ -489,7 +489,7 @@ clean_xcode_documentation_cache() {
     [[ -d "$doc_cache_root" ]] || return 0
 
     if pgrep -x "Xcode" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode is running, skipping documentation cache cleanup"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode is running, skipping documentation cache cleanup" "Xcode 正在运行，跳过文档缓存清理")"
         note_activity
         return 0
     fi
@@ -538,7 +538,7 @@ clean_xcode_documentation_cache() {
 
     if ! has_sudo_session; then
         if ! ensure_sudo_session "Cleaning Xcode documentation cache requires admin access"; then
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode documentation cache cleanup skipped (sudo denied)"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode documentation cache cleanup skipped (sudo denied)" "Xcode 文档缓存清理跳过（sudo 被拒绝）")"
             note_activity
             return 0
         fi
@@ -558,17 +558,17 @@ clean_xcode_documentation_cache() {
     done
 
     if [[ $removed_count -gt 0 ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode documentation cache · removed ${removed_count} old indexes"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode documentation cache · removed" "Xcode 文档缓存 · 已移除") ${removed_count} old indexes"
         if [[ $skipped_count -gt 0 ]]; then
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode documentation cache · skipped ${skipped_count} protected items"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode documentation cache · skipped" "Xcode 文档缓存 · 已跳过") ${skipped_count} $(t "protected items" "受保护项目")"
         fi
         note_activity
     elif [[ $skipped_count -gt 0 ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode documentation cache · nothing to clean"
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode documentation cache · skipped ${skipped_count} protected items"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode documentation cache · nothing to clean" "Xcode 文档缓存 · 无可清理项")"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode documentation cache · skipped" "Xcode 文档缓存 · 已跳过") ${skipped_count} $(t "protected items" "受保护项目")"
         note_activity
     else
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode documentation cache · no items removed"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode documentation cache · no items removed" "Xcode 文档缓存 · 无项目被移除")"
         note_activity
     fi
 }
@@ -595,7 +595,7 @@ clean_xcode_xctest_devices() {
     [[ -d "$xctest_devices_dir" ]] || return 0
 
     if _xcode_xctest_devices_process_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode or XCTest is running, skipping XCTestDevices cleanup"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode or XCTest is running, skipping XCTestDevices cleanup" "Xcode 或 XCTest 正在运行，跳过 XCTestDevices 清理")"
         note_activity
         return 0
     fi
@@ -608,7 +608,7 @@ clean_xcode_system_coresimulator_caches() {
     [[ -d "$cache_root" ]] || return 0
 
     if _coresimulator_cache_process_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} CoreSimulator is running, skipping system Simulator cache cleanup"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "CoreSimulator is running, skipping system Simulator cache cleanup" "CoreSimulator 正在运行，跳过系统模拟器缓存清理")"
         note_activity
         return 0
     fi
@@ -639,7 +639,7 @@ clean_xcode_system_coresimulator_caches() {
 
     if ! has_sudo_session; then
         if ! ensure_sudo_session "Cleaning Xcode Simulator system cache requires admin access"; then
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Xcode Simulator system cache · skipped (sudo denied)"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Xcode Simulator system cache · skipped (sudo denied)" "Xcode 模拟器系统缓存 · 跳过（sudo 被拒绝）")"
             note_activity
             return 0
         fi
@@ -668,16 +668,16 @@ clean_xcode_system_coresimulator_caches() {
         local line_color
         line_color=$(cleanup_result_color_kb "$removed_size_kb")
         if [[ $skipped_count -gt 0 ]]; then
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode Simulator system cache · removed ${removed_count} (${line_color}${removed_human}${NC}), skipped ${skipped_count} protected"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Xcode Simulator system cache · removed" "Xcode 模拟器系统缓存 · 已移除") ${removed_count} (${line_color}${removed_human}${NC}$(t "), skipped" "), 已跳过") ${skipped_count} $(t "protected" "受保护")"
         else
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode Simulator system cache · removed ${removed_count} (${line_color}${removed_human}${NC})"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Xcode Simulator system cache · removed" "Xcode 模拟器系统缓存 · 已移除") ${removed_count} (${line_color}${removed_human}${NC})"
         fi
         note_activity
     elif [[ $skipped_count -gt 0 ]]; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Xcode Simulator system cache · skipped ${skipped_count} protected, none removed"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Xcode Simulator system cache · skipped" "Xcode Simulator system cache · 已跳过") ${skipped_count} protected, none removed"
         note_activity
     else
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode Simulator system cache · already clean"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode Simulator system cache · already clean" "Xcode 模拟器系统缓存 · 已清理")"
         note_activity
     fi
 }
@@ -930,14 +930,14 @@ clean_xcode_simulator_runtime_volumes() {
     fi
 
     if [[ ${#selected_paths[@]} -eq 0 ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode runtime volumes · already clean"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode runtime volumes · already clean" "Xcode 运行时卷 · 已清理")"
         note_activity
         return 0
     fi
 
     if ! has_sudo_session; then
         if ! ensure_sudo_session "Cleaning Xcode runtime volumes requires admin access"; then
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Xcode runtime volumes · skipped (sudo denied)"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Xcode runtime volumes · skipped (sudo denied)" "Xcode 运行时卷 · 跳过（sudo 被拒绝）")"
             note_activity
             return 0
         fi
@@ -963,16 +963,16 @@ clean_xcode_simulator_runtime_volumes() {
         local line_color
         line_color=$(cleanup_result_color_kb "$removed_size_kb")
         if [[ $skipped_protected -gt 0 ]]; then
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode runtime volumes · removed ${removed_count} (${line_color}${removed_human}${NC}), skipped ${skipped_protected} protected"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Xcode runtime volumes · removed" "Xcode 运行时卷 · 已移除") ${removed_count} (${line_color}${removed_human}${NC}$(t "), skipped" "), 已跳过") ${skipped_protected} $(t "protected" "受保护")"
         else
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode runtime volumes · removed ${removed_count} (${line_color}${removed_human}${NC})"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Xcode runtime volumes · removed" "Xcode 运行时卷 · 已移除") ${removed_count} (${line_color}${removed_human}${NC})"
         fi
         note_activity
     else
         if [[ $skipped_protected -gt 0 ]]; then
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Xcode runtime volumes · skipped ${skipped_protected} protected, none removed"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Xcode runtime volumes · skipped" "Xcode runtime volumes · 已跳过") ${skipped_protected} protected, none removed"
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode runtime volumes · already clean"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode runtime volumes · already clean" "Xcode 运行时卷 · 已清理")"
         fi
         note_activity
     fi
@@ -1019,7 +1019,7 @@ clean_dev_mobile() {
         fi
         if [[ "$simctl_probe_ok" != "true" ]]; then
             debug_log "simctl not accessible or CoreSimulator service not running"
-            echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode unavailable simulators · simctl not available"
+            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode unavailable simulators · simctl not available" "Xcode 不可用模拟器 · simctl 不可用")"
             note_activity
             simctl_available=false
         fi
@@ -1046,14 +1046,14 @@ clean_dev_mobile() {
 
             if [[ "$DRY_RUN" == "true" ]]; then
                 if ((unavailable_before > 0)); then
-                    echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Xcode unavailable simulators · would clean ${unavailable_before}, ${unavailable_size_human}"
+                    echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Xcode unavailable simulators · would clean" "Xcode 不可用模拟器 · 将清理") ${unavailable_before}, ${unavailable_size_human}"
                 else
-                    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode unavailable simulators · already clean"
+                    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode unavailable simulators · already clean" "Xcode 不可用模拟器 · 已清理")"
                 fi
             else
                 # Skip if no unavailable simulators
                 if ((unavailable_before == 0)); then
-                    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode unavailable simulators · already clean"
+                    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Xcode unavailable simulators · already clean" "Xcode 不可用模拟器 · 已清理")"
                     note_activity
                 else
                     start_section_spinner "Checking unavailable simulators..."
@@ -1076,7 +1076,7 @@ clean_dev_mobile() {
                         local line_color
                         line_color=$(cleanup_result_color_kb "$unavailable_size_kb")
                         if ((removed_unavailable > 0)); then
-                            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode unavailable simulators · removed ${removed_unavailable}, ${line_color}${unavailable_size_human}${NC}"
+                            echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Xcode unavailable simulators · removed" "Xcode 不可用模拟器 · 已移除") ${removed_unavailable}, ${line_color}${unavailable_size_human}${NC}"
                         else
                             echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode unavailable simulators · cleanup completed, ${line_color}${unavailable_size_human}${NC}"
                         fi
@@ -1126,16 +1126,16 @@ clean_dev_mobile() {
                                 if ((manual_failed == 0)); then
                                     local line_color
                                     line_color=$(cleanup_result_color_kb "$unavailable_size_kb")
-                                    echo -e "  ${line_color}${ICON_SUCCESS}${NC} Xcode unavailable simulators · removed ${manually_removed} (fallback), ${line_color}${unavailable_size_human}${NC}"
+                                    echo -e "  ${line_color}${ICON_SUCCESS}${NC} $(t "Xcode unavailable simulators · removed" "Xcode 不可用模拟器 · 已移除") ${manually_removed} (fallback), ${line_color}${unavailable_size_human}${NC}"
                                 else
-                                    echo -e "  ${YELLOW}${ICON_WARNING}${NC} Xcode unavailable simulators · partially cleaned ${manually_removed}/${#unavailable_udids[@]}, ${unavailable_size_human}"
+                                    echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Xcode unavailable simulators · partially cleaned" "Xcode 不可用模拟器 · 部分清理") ${manually_removed}/${#unavailable_udids[@]}, ${unavailable_size_human}"
                                 fi
                             else
-                                echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode unavailable simulators cleanup failed${error_hint}"
+                                echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode unavailable simulators cleanup failed" "Xcode 不可用模拟器清理失败")${error_hint}"
                                 debug_log "simctl delete error: $delete_output"
                             fi
                         else
-                            echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode unavailable simulators cleanup failed${error_hint}"
+                            echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Xcode unavailable simulators cleanup failed" "Xcode 不可用模拟器清理失败")${error_hint}"
                             debug_log "simctl delete error: $delete_output"
                         fi
                     fi
@@ -1184,7 +1184,7 @@ clean_dev_jvm() {
     safe_clean ~/.gradle/caches/build-cache-*/* "Gradle build cache"
     safe_clean ~/.gradle/notifications/* "Gradle notifications cache"
     if gradle_daemon_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Gradle daemon is running · daemon/workers cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Gradle daemon is running · daemon/workers cleanup skipped" "Gradle 守护进程正在运行 · 守护进程/工作进程清理跳过")"
     else
         safe_clean ~/.gradle/daemon/* "Gradle daemon"
         safe_clean ~/.gradle/workers/* "Gradle workers"
@@ -1446,7 +1446,7 @@ clean_claude_desktop_bundled_versions() {
     sdk_version=$(claude_desktop_sdk_version "$claude_support" || true)
     if [[ -z "$sdk_version" ]]; then
         note_activity
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Claude Desktop bundled Claude Code active version unknown · skipping cleanup"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Claude Desktop bundled Claude Code active version unknown · skipping cleanup" "Claude Desktop 内置 Claude Code 当前版本未知 · 跳过清理")"
         return 0
     fi
 
@@ -1647,16 +1647,16 @@ clean_codex_runtimes() {
 
     if declare -f is_path_whitelisted > /dev/null 2>&1 && is_path_whitelisted "$runtime_root"; then
         if [[ "${DRY_RUN:-false}" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Codex runtimes · would skip (whitelist)"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Codex runtimes · would skip (whitelist)" "Codex 运行时 · 将跳过（白名单）")"
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Codex runtimes · skipped (whitelist)"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Codex runtimes · skipped (whitelist)" "Codex 运行时 · 已跳过（白名单）")"
         fi
         note_activity
         return 0
     fi
 
     if codex_desktop_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Codex runtimes · skipped (Codex running)"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Codex runtimes · skipped (Codex running)" "Codex 运行时 · 跳过（Codex 运行中）")"
         note_activity
         return 0
     fi
@@ -1670,9 +1670,9 @@ clean_codex_runtimes() {
     while IFS= read -r -d '' runtime_dir; do
         if declare -f is_path_whitelisted > /dev/null 2>&1 && is_path_whitelisted "$runtime_dir"; then
             if [[ "${DRY_RUN:-false}" == "true" ]]; then
-                echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Codex runtimes · would skip (whitelist)"
+                echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $(t "Codex runtimes · would skip (whitelist)" "Codex 运行时 · 将跳过（白名单）")"
             else
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Codex runtimes · skipped (whitelist)"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Codex runtimes · skipped (whitelist)" "Codex 运行时 · 已跳过（白名单）")"
             fi
             note_activity
             continue
@@ -1698,12 +1698,12 @@ clean_codex_cli() {
     [[ -d "$codex_root" ]] || return 0
 
     if codex_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Codex CLI state · skipped (Codex running)"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Codex CLI state · skipped (Codex running)" "Codex CLI 状态 · 跳过（Codex 运行中）")"
         note_activity
         return 0
     fi
 
-    echo -e "  ${GRAY}${ICON_WARNING}${NC} Codex CLI state · preserved (sessions, credentials)"
+    echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Codex CLI state · preserved (sessions, credentials)" "Codex CLI 状态 · 已保留（会话、凭据）")"
     note_activity
     debug_log "Codex CLI state left intact by default: $codex_root"
 }
@@ -1748,7 +1748,7 @@ clean_chrome_devtools_mcp_caches() {
     local mcp_profile="$HOME/.cache/chrome-devtools-mcp/chrome-profile"
 
     if chrome_devtools_mcp_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Chrome DevTools MCP caches · skipped (server running)"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Chrome DevTools MCP caches · skipped (server running)" "Chrome DevTools MCP 缓存 · 跳过（服务器运行中）")"
         note_activity
         return 0
     fi
@@ -1843,7 +1843,7 @@ clean_dev_agent_worktrees() {
         [[ "$count" -gt 0 ]] || return 0
         note_activity
         echo -e "  ${GRAY}${ICON_WARNING}${NC} AI agent worktrees · skipped by default ($count in .claude/worktrees, $(bytes_to_human $((total_kb * 1024))))"
-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Remove clean worktrees: MOLE_AGENT_WORKTREES=1 mo clean${NC}"
+        echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Remove clean worktrees: MOLE_AGENT_WORKTREES=1 mo clean" "清理工作树：MOLE_AGENT_WORKTREES=1 mo clean")${NC}"
         debug_log "AI agent worktrees left intact by default ($count dirs, $total_kb KB)"
         return 0
     fi
@@ -1871,7 +1871,7 @@ clean_dev_agent_worktrees() {
             else
                 kept=$((kept + 1))
                 note_activity
-                echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}Kept agent worktree (unsaved work): ${wt/#$HOME/~}${NC}"
+                echo -e "  ${GRAY}${ICON_REVIEW}${NC} ${GRAY}$(t "Kept agent worktree (unsaved work):" "保留 agent 工作树（未保存的工作）：") ${wt/#$HOME/~}${NC}"
             fi
         done < <(command find "$container" -mindepth 1 -maxdepth 1 -type d -print0 2> /dev/null)
     done

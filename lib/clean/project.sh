@@ -188,7 +188,7 @@ load_purge_config() {
             PURGE_SEARCH_PATHS=("${discovered[@]}")
             if save_discovered_paths "${discovered[@]}"; then
                 if [[ -t 1 ]] && [[ -z "${_PURGE_DISCOVERY_SILENT:-}" ]]; then
-                    echo -e "${GRAY}Found ${#discovered[@]} project directories, saved to config${NC}" >&2
+                    echo -e "${GRAY}$(t "Found ${#discovered[@]} project directories, saved to config" "找到 ${#discovered[@]} project directories, saved to config")${NC}" >&2
                 fi
             else
                 warn_purge_config_write_failure
@@ -632,7 +632,7 @@ get_dir_size_kb() {
 
     if [[ $du_exit -ne 0 ]]; then
         debug_log "Size calculation failed (exit $du_exit): $path"
-        echo "ERROR"
+        echo "$(t "ERROR" "错误")"
         return
     fi
 
@@ -642,7 +642,7 @@ get_dir_size_kb() {
         echo "$size_kb"
     else
         debug_log "Size calculation returned invalid output: $path"
-        echo "ERROR"
+        echo "$(t "ERROR" "错误")"
     fi
 }
 # Purge category selector.
@@ -995,7 +995,7 @@ confirm_purge_cleanup() {
         done
     fi
 
-    echo -ne "${PURPLE}${ICON_ARROW}${NC} Remove ${item_count} ${item_text}, ${size_display}${unknown_hint}  ${GREEN}Enter${NC} confirm, ${GRAY}ESC${NC} cancel: "
+    echo -ne "${PURPLE}${ICON_ARROW}${NC} Remove ${item_count} ${item_text}, ${size_display}${unknown_hint}  ${GREEN}$(t "Enter" "确认")${NC} confirm, ${GRAY}ESC${NC} cancel: "
     drain_pending_input
     local key=""
     IFS= read -r -s -n1 key || key=""

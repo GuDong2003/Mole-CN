@@ -27,7 +27,7 @@ check_tcc_permissions() {
         echo -e "${GRAY}macOS will request permissions to access Library folders.${NC}"
         echo -e "${GRAY}You may see ${GREEN}${#tcc_dirs[@]} permission dialogs${NC}${GRAY}, please approve them all.${NC}"
         echo ""
-        echo -ne "${PURPLE}${ICON_ARROW}${NC} Press ${GREEN}Enter${NC} to continue: "
+        echo -ne "${PURPLE}${ICON_ARROW}${NC} Press ${GREEN}$(t "Enter" "确认")${NC} to continue: "
         read -r
         MOLE_SPINNER_PREFIX="" start_inline_spinner "Requesting permissions..."
         # Touch each directory to trigger prompts without deep scanning.
@@ -94,7 +94,7 @@ clean_service_worker_cache() {
         line_color=$(cleanup_result_color_kb "$cleaned_size")
         if [[ "$DRY_RUN" != "true" ]]; then
             if [[ $protected_count -gt 0 ]]; then
-                echo -e "  ${line_color}${ICON_SUCCESS}${NC} $browser_name Service Worker${NC}, ${line_color}${cleaned_mb}MB${NC}, ${protected_count} protected"
+                echo -e "  ${line_color}${ICON_SUCCESS}${NC} $browser_name Service Worker${NC}, ${line_color}${cleaned_mb}MB${NC}, ${protected_count} $(t "protected" "受保护")"
             else
                 echo -e "  ${line_color}${ICON_SUCCESS}${NC} $browser_name Service Worker${NC}, ${line_color}${cleaned_mb}MB${NC}"
             fi
@@ -446,7 +446,7 @@ clean_python_bytecode_cache_group() {
         local line_color
         line_color=$(cleanup_result_color_kb "$total_size_kb")
         if [[ $skipped_count -gt 0 ]]; then
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Python bytecode cache · ${display_root}${NC}, ${line_color}${removed_count} dirs, ${size_human}${NC}, ${skipped_count} skipped"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Python bytecode cache · ${display_root}${NC}, ${line_color}${removed_count} dirs, ${size_human}${NC}, ${skipped_count} $(t "skipped" "已跳过")"
         else
             echo -e "  ${line_color}${ICON_SUCCESS}${NC} Python bytecode cache · ${display_root}${NC}, ${line_color}${removed_count} dirs, ${size_human}${NC}"
         fi

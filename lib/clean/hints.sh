@@ -539,7 +539,7 @@ show_system_data_hint_notice() {
 
     if [[ ${#clue_labels[@]} -eq 0 ]]; then
         note_activity
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No common System Data clues detected"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "No common System Data clues detected" "未发现常见系统数据线索")"
         return 0
     fi
 
@@ -549,9 +549,9 @@ show_system_data_hint_notice() {
         local human_size
         human_size=$(bytes_to_human "$((clue_sizes[i] * 1024))")
         echo -e "  ${GREEN}${ICON_LIST}${NC} ${clue_labels[$i]}: ${human_size}"
-        echo -e "  ${GRAY}${ICON_SUBLIST}${NC} Path: ${GRAY}${clue_paths[$i]}${NC}"
+        echo -e "  ${GRAY}${ICON_SUBLIST}${NC} $(t "Path:" "路径：") ${GRAY}${clue_paths[$i]}${NC}"
     done
-    echo -e "  ${GRAY}${ICON_REVIEW}${NC} Review: mo analyze, Device backups, docker system df"
+    echo -e "  ${GRAY}${ICON_REVIEW}${NC} $(t "Review: mo analyze, Device backups, docker system df" "查看：mo analyze、设备备份、docker system df")"
 }
 
 # shellcheck disable=SC2329
@@ -562,7 +562,7 @@ show_project_artifact_hint_notice() {
         if [[ "${PROJECT_ARTIFACT_HINT_SCAN_SKIPPED:-false}" == "true" ]]; then
             note_activity
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} Skipped slow project artifact scan"
-            echo -e "  ${GRAY}${ICON_REVIEW}${NC} Review: mo purge"
+            echo -e "  ${GRAY}${ICON_REVIEW}${NC} $(t "Review: mo purge" "查看：mo purge")"
         fi
         return 0
     fi
@@ -590,25 +590,25 @@ show_project_artifact_hint_notice() {
         fi
 
         if [[ "$estimate_is_partial" == "true" ]]; then
-            echo -e "  ${GREEN}${ICON_LIST}${NC} ${GREEN}${hint_count_label}${NC} candidates, at least ${estimate_human} sampled from ${PROJECT_ARTIFACT_HINT_ESTIMATE_SAMPLES} items"
+            echo -e "  ${GREEN}${ICON_LIST}${NC} ${GREEN}${hint_count_label}${NC} $(t "candidates, at least" "个候选，至少") ${estimate_human} sampled from ${PROJECT_ARTIFACT_HINT_ESTIMATE_SAMPLES} $(t "items" "项")"
         else
-            echo -e "  ${GREEN}${ICON_LIST}${NC} ${GREEN}${hint_count_label}${NC} candidates, sampled ${estimate_human}"
+            echo -e "  ${GREEN}${ICON_LIST}${NC} ${GREEN}${hint_count_label}${NC} $(t "candidates, sampled" "个候选，抽样") ${estimate_human}"
         fi
     else
-        echo -e "  ${GREEN}${ICON_LIST}${NC} ${GREEN}${hint_count_label}${NC} candidates"
+        echo -e "  ${GREEN}${ICON_LIST}${NC} ${GREEN}${hint_count_label}${NC} $(t "candidates" "个候选")"
     fi
 
     if [[ -n "$example_text" ]]; then
-        echo -e "  ${GRAY}${ICON_SUBLIST}${NC} Examples: ${GRAY}${example_text}${NC}"
+        echo -e "  ${GRAY}${ICON_SUBLIST}${NC} $(t "Examples:" "示例：") ${GRAY}${example_text}${NC}"
     fi
     if [[ "${PROJECT_ARTIFACT_HINT_SCAN_SKIPPED:-false}" == "true" ]]; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Some slow locations were skipped"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} $(t "Some slow locations were skipped" "部分慢速位置已跳过")"
     fi
     local review_command="mo purge"
     if [[ $PROJECT_ARTIFACT_HINT_ESTIMATE_SAMPLES -gt 0 && $PROJECT_ARTIFACT_HINT_ESTIMATED_KB -eq 0 ]]; then
         review_command="mo purge --include-empty"
     fi
-    echo -e "  ${GRAY}${ICON_REVIEW}${NC} Review: ${review_command}"
+    echo -e "  ${GRAY}${ICON_REVIEW}${NC} $(t "Review:" "查看：") ${review_command}"
 }
 
 # shellcheck disable=SC2329
@@ -666,7 +666,7 @@ show_user_launch_agent_hint_notice() {
 
     local i
     for i in "${!labels[@]}"; do
-        echo -e "  ${GREEN}${ICON_LIST}${NC} Potential stale login item: ${labels[$i]}"
+        echo -e "  ${GREEN}${ICON_LIST}${NC} $(t "Potential stale login item:" "可能的过期登录项：") ${labels[$i]}"
         echo -e "  ${GRAY}${ICON_SUBLIST}${NC} ${reasons[$i]}: ${GRAY}${targets[$i]}${NC}"
     done
     echo -e "  ${GRAY}${ICON_REVIEW}${NC} Review: open ~/Library/LaunchAgents and remove only items you recognize"
@@ -941,8 +941,8 @@ show_orphan_dotdir_hint_notice() {
 
     local i
     for i in "${!labels[@]}"; do
-        echo -e "  ${GREEN}${ICON_LIST}${NC} Potential orphan dotfile: ${labels[$i]}"
+        echo -e "  ${GREEN}${ICON_LIST}${NC} $(t "Potential orphan dotfile:" "可能的孤立点文件：") ${labels[$i]}"
         echo -e "  ${GRAY}${ICON_SUBLIST}${NC} ${details[$i]}"
     done
-    echo -e "  ${GRAY}${ICON_REVIEW}${NC} Review manually before removing any ~/.<dir> directory"
+    echo -e "  ${GRAY}${ICON_REVIEW}${NC} $(t "Review manually before removing any ~/.<dir> directory" "删除 ~/.<dir> 目录前请手动审查")"
 }

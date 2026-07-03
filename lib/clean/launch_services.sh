@@ -149,6 +149,6 @@ clean_stale_launch_services_registrations() {
         log_success "LaunchServices stale app registrations, $success_count removed"
     fi
     if [[ $failed_count -gt 0 ]]; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} LaunchServices stale app registrations, ${failed_count} failed"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} LaunchServices stale app registrations, ${failed_count} $(t "failed" "失败")"
     fi
 }
