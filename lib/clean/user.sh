@@ -109,7 +109,7 @@ _clean_incomplete_downloads() {
         for f in $pattern; do
             [[ -e "$f" ]] || continue
             if lsof -F n -- "$f" > /dev/null 2>&1; then
-                echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Skipping active download: $(basename" "跳过 active download: $(basename") "$f")"
+                echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Skipping active download:" "跳过正在进行的下载：") $(basename "$f")"
                 continue
             fi
             safe_clean "$f" "$label" || true
