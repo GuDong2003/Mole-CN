@@ -55,7 +55,7 @@ uninstall_normalize_last_used_display() {
     local display
     display=$(format_last_used_summary "$last_used")
     if [[ -z "$display" || "$display" == "Never" ]]; then
-        echo "Unknown"
+        echo "$(t "Unknown" "未知")"
         return 0
     fi
     echo "$display"
@@ -1073,7 +1073,7 @@ scan_applications() {
         [[ $cache_source_is_temp == true ]] && rm -f "$cache_source" 2> /dev/null || true
         restore_scan_int_trap
         printf "\r\033[K" >&2
-        echo "No applications found to uninstall." >&2
+        echo "$(t "No applications found to uninstall." "未找到需要卸载的应用。")" >&2
         return 1
     fi
     # Phase 5: parallel metadata resolution for cold rows.
@@ -1084,7 +1084,7 @@ scan_applications() {
 
     if [[ ! -s "$scan_raw_file" ]]; then
         stop_scan_spinner
-        echo "No applications found to uninstall" >&2
+        echo "$(t "No applications found to uninstall" "未找到需要卸载的应用")" >&2
         rm -f "$temp_file" "$scan_raw_file" "$merged_file" "$refresh_file" "$cache_snapshot_file" "$discovered_file" "$cached_rows_file" "$uncached_rows_file" "${temp_file}.sorted" "$spinner_shown_file" 2> /dev/null || true
         [[ $cache_source_is_temp == true ]] && rm -f "$cache_source" 2> /dev/null || true
         restore_scan_int_trap
@@ -1300,7 +1300,7 @@ uninstall_list_apps() {
 
     local total=${#apps_data[@]}
     if [[ $total -eq 0 ]]; then
-        echo "No applications found."
+        echo "$(t "No applications found." "未找到应用。")"
         return 0
     fi
 
@@ -1383,13 +1383,13 @@ main() {
                 ;;
             "--whitelist")
                 echo "Unknown uninstall option: $arg"
-                echo "Whitelist management is currently supported by: mo clean --whitelist / mo optimize --whitelist"
-                echo "Use 'mo uninstall --help' for supported options."
+                echo "$(t "Whitelist management is currently supported by: mo clean --whitelist / mo optimize --whitelist" "白名单管理目前支持：mo clean --whitelist / mo optimize --whitelist")"
+                echo "$(t "Use 'mo uninstall --help' for supported options." "使用 'mo uninstall --help' 查看支持的选项。")"
                 exit 1
                 ;;
             -*)
                 echo "Unknown uninstall option: $arg"
-                echo "Use 'mo uninstall --help' for supported options."
+                echo "$(t "Use 'mo uninstall --help' for supported options." "使用 'mo uninstall --help' 查看支持的选项。")"
                 exit 1
                 ;;
             *)
@@ -1407,7 +1407,7 @@ main() {
 
     hide_cursor
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
-        echo -e "${YELLOW}${ICON_DRY_RUN} DRY RUN MODE${NC}, No app files or settings will be modified"
+        echo -e "${YELLOW}${ICON_DRY_RUN} $(t "DRY RUN MODE" "预览模式")${NC}, No app files or settings will be modified"
         printf '\n'
     fi
 
@@ -1433,7 +1433,7 @@ main() {
 
         if [[ ${#selected_apps[@]} -eq 0 ]]; then
             show_cursor
-            echo "No matching applications found."
+            echo "$(t "No matching applications found." "未找到匹配的应用。")"
             return 1
         fi
 
@@ -1453,11 +1453,11 @@ main() {
         done
 
         printf '\n'
-        printf "Proceed with uninstallation? [y/N] "
+        printf "$(t "Proceed with uninstallation? [y/N]" "继续卸载？[y/N]") "
         local confirm
         read -r confirm
         if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-            echo "Aborted."
+            echo "$(t "Aborted." "已取消。")"
             return 0
         fi
 
@@ -1535,7 +1535,7 @@ main() {
         printf '\033[2J\033[H' >&2
         local selection_count=${#selected_apps[@]}
         if [[ $selection_count -eq 0 ]]; then
-            echo "No apps selected"
+            echo "$(t "No apps selected" "未选择应用")"
             continue
         fi
         echo -e "${BLUE}${ICON_CONFIRM}${NC} Selected ${selection_count} apps:"

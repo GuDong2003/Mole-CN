@@ -807,7 +807,7 @@ _mole_delete_log() {
     fi
 
     local ts
-    ts=$(date '+%Y-%m-%dT%H:%M:%S%z' 2> /dev/null || echo "unknown")
+    ts=$(date '+%Y-%m-%dT%H:%M:%S%z' 2> /dev/null || echo "$(t "unknown" "未知")")
 
     if ! printf '%s\t%s\t%s\t%s\t%s\n' \
         "$ts" "$mode" "$size_kb" "$status" "$target" \

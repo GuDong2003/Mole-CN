@@ -52,10 +52,10 @@ _request_password() {
     trap '[[ -n "${stty_orig:-}" ]] && stty "${stty_orig:-}" < "$tty_path" 2> /dev/null || true' RETURN
 
     if check_touchid_support; then
-        echo -e "${GRAY}Note: Touch ID dialog may appear once more, just cancel it${NC}" > "$tty_path"
+        echo -e "${GRAY}$(t "Note: Touch ID dialog may appear once more, just cancel it" "提示：Touch ID 对话框可能再次出现，取消即可")${NC}" > "$tty_path"
     fi
 
-    echo -e "${PURPLE}${ICON_ARROW}${NC} Enter your credentials:" > "$tty_path"
+    echo -e "${PURPLE}${ICON_ARROW}${NC} $(t "Enter your credentials:" "请输入您的凭据：")" > "$tty_path"
 
     # shellcheck disable=SC2024,SC2094
     # Intentionally route sudo's native prompt to the same TTY device it reads from.

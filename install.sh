@@ -589,7 +589,7 @@ check_requirements() {
 
             echo -e "${YELLOW}Mole is installed via Homebrew${NC}"
             echo ""
-            echo "Choose one:"
+            echo "$(t "Choose one:" "请选择：")"
             echo -e "  1. Update via Homebrew: ${GREEN}brew upgrade mole${NC}"
             echo -e "  2. Switch to manual: ${GREEN}brew uninstall --force mole${NC} then re-run this"
             echo ""
@@ -888,7 +888,7 @@ setup_path() {
     if [[ "$INSTALL_DIR" != "/usr/local/bin" ]]; then
         log_warning "$INSTALL_DIR is not in your PATH"
         echo ""
-        echo "To use mole from anywhere, add this line to your shell profile:"
+        echo "$(t "To use mole from anywhere, add this line to your shell profile:" "要将 mole 添加到全局路径，请将以下行加入你的 shell 配置文件：")"
         echo "export PATH=\"$INSTALL_DIR:\$PATH\""
         echo ""
         echo "For example, add it to ~/.zshrc or ~/.bash_profile"
@@ -917,7 +917,7 @@ print_usage_summary() {
     log_confirm "$message"
 
     echo ""
-    echo "Usage:"
+    echo "$(t "Usage:" "用法：")"
     if [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then
         echo "  mo                           # Interactive menu"
         echo "  mo clean                     # Deep cleanup"
@@ -996,7 +996,7 @@ perform_update() {
         else
             log_error "Cannot update Homebrew-managed Mole without full installation"
             echo ""
-            echo "Please update via Homebrew:"
+            echo "$(t "Please update via Homebrew:" "请通过 Homebrew 更新：")"
             echo -e "  ${GREEN}brew upgrade mole${NC}"
             exit 1
         fi

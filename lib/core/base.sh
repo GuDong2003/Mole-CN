@@ -234,7 +234,7 @@ format_free_space_kb() {
         return 0
     fi
 
-    echo "Unknown"
+    echo "$(t "Unknown" "未知")"
 }
 
 # Get free disk space on root volume.
@@ -246,7 +246,7 @@ get_free_space() {
         return $?
     fi
 
-    echo "Unknown"
+    echo "$(t "Unknown" "未知")"
 }
 
 # Get optimal parallel jobs for operation type (scan|io|compute|default)

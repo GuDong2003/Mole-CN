@@ -58,7 +58,7 @@ paginated_multi_select() {
 
     # Validation
     if [[ ${#items[@]} -eq 0 ]]; then
-        echo "No items provided" >&2
+        echo "$(t "No items provided" "未提供项目")" >&2
         return 1
     fi
 
@@ -320,6 +320,6 @@ paginated_multi_select() {
 
 # Export function for external use
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "This is a library file. Source it from other scripts." >&2
+    echo "$(t "This is a library file. Source it from other scripts." "这是库文件，请从其他脚本引用。")" >&2
     exit 1
 fi

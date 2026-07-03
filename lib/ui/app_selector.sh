@@ -189,7 +189,7 @@ select_apps_for_uninstall() {
     fi
 
     if [[ -z "$MOLE_SELECTION_RESULT" ]]; then
-        echo "No apps selected"
+        echo "$(t "No apps selected" "未选择应用")"
         return 1
     fi
 
@@ -210,6 +210,6 @@ select_apps_for_uninstall() {
 
 # Export function for external use
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "This is a library file. Source it from other scripts." >&2
+    echo "$(t "This is a library file. Source it from other scripts." "这是库文件，请从其他脚本引用。")" >&2
     exit 1
 fi

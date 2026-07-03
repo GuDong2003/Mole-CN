@@ -16,7 +16,7 @@ show_history_help() {
     echo ""
     echo "Review recent Mole operation and deletion activity."
     echo ""
-    echo "Options:"
+    echo "$(t "Options:" "选项：")"
     echo "  --json           Output history as JSON"
     echo "  --limit N        Show the most recent N entries, 1-200"
     echo "  -h, --help       Show this help message"
@@ -31,11 +31,11 @@ main() {
             "--limit")
                 shift
                 if [[ $# -eq 0 ]]; then
-                    echo "Missing value for --limit" >&2
+                    echo "$(t "Missing value for --limit" "--limit 缺少参数值")" >&2
                     exit 1
                 fi
                 if ! HISTORY_LIMIT=$(history_parse_limit "$1"); then
-                    echo "Invalid value for --limit: $1" >&2
+                    echo "$(t "Invalid value for --limit:" "--limit 参数值无效：") $1" >&2
                     exit 1
                 fi
                 ;;
@@ -44,13 +44,13 @@ main() {
                 exit 0
                 ;;
             -*)
-                echo "Unknown option for mo history: $1" >&2
-                echo "Run 'mo history --help' for usage." >&2
+                echo "$(t "Unknown option for mo history:" "mo history 未知选项：") $1" >&2
+                echo "$(t "Run 'mo history --help' for usage." "运行 'mo history --help' 查看用法。")" >&2
                 exit 1
                 ;;
             *)
-                echo "Unexpected argument for mo history: $1" >&2
-                echo "Run 'mo history --help' for usage." >&2
+                echo "$(t "Unexpected argument for mo history:" "mo history 意外参数：") $1" >&2
+                echo "$(t "Run 'mo history --help' for usage." "运行 'mo history --help' 查看用法。")" >&2
                 exit 1
                 ;;
         esac

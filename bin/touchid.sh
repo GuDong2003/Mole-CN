@@ -72,9 +72,9 @@ touchid_dry_run_enabled() {
 # Show current Touch ID status
 show_status() {
     if is_touchid_configured; then
-        echo -e "${GREEN}${ICON_SUCCESS}${NC} Touch ID is enabled for sudo"
+        echo -e "${GREEN}${ICON_SUCCESS}${NC} $(t "Touch ID is enabled for sudo" "Touch ID 已为 sudo 启用")"
     else
-        echo -e "${YELLOW}☻${NC} Touch ID is not configured for sudo"
+        echo -e "${YELLOW}☻${NC} $(t "Touch ID is not configured for sudo" "Touch ID 未为 sudo 配置")"
     fi
 }
 
@@ -85,9 +85,9 @@ enable_touchid() {
 
     if touchid_dry_run_enabled; then
         if is_touchid_configured; then
-            echo -e "${GREEN}${ICON_SUCCESS} Touch ID is already enabled, no changes needed${NC}"
+            echo -e "${GREEN}${ICON_SUCCESS} $(t "Touch ID is already enabled, no changes needed" "Touch ID 已启用，无需更改")${NC}"
         else
-            echo -e "${GREEN}${ICON_SUCCESS} [DRY RUN] Would enable Touch ID for sudo${NC}"
+            echo -e "${GREEN}${ICON_SUCCESS} [DRY RUN] $(t "Would enable Touch ID for sudo" "将启用 Touch ID for sudo")${NC}"
             echo -e "${GRAY}${ICON_REVIEW} Target files: ${PAM_SUDO_FILE} and/or ${PAM_SUDO_LOCAL_FILE}${NC}"
         fi
         return 0
@@ -98,7 +98,7 @@ enable_touchid() {
         log_warning "This Mac may not support Touch ID"
         read -rp "Continue anyway? [y/N] " confirm
         if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-            echo -e "${YELLOW}Cancelled${NC}"
+            echo -e "${YELLOW}$(t "Cancelled" "已取消")${NC}"
             return 1
         fi
         echo ""
@@ -114,10 +114,10 @@ enable_touchid() {
                 temp_file=$(create_temp_file)
                 grep -v "pam_tid.so" "$PAM_SUDO_FILE" > "$temp_file"
                 if secure_install_pam "$temp_file" "$PAM_SUDO_FILE" 2> /dev/null; then
-                    echo -e "${GREEN}${ICON_SUCCESS} Cleanup legacy configuration${NC}"
+                    echo -e "${GREEN}${ICON_SUCCESS} $(t "Cleanup legacy configuration" "清理旧版配置")${NC}"
                 fi
             fi
-            echo -e "${GREEN}${ICON_SUCCESS} Touch ID is already enabled${NC}"
+            echo -e "${GREEN}${ICON_SUCCESS} $(t "Touch ID is already enabled" "Touch ID 已启用")${NC}"
             return 0
         fi
 
@@ -220,9 +220,9 @@ disable_touchid() {
 
     if touchid_dry_run_enabled; then
         if ! is_touchid_configured; then
-            echo -e "${YELLOW}Touch ID is not currently enabled${NC}"
+            echo -e "${YELLOW}$(t "Touch ID is not currently enabled" "Touch ID 当前未启用")${NC}"
         else
-            echo -e "${GREEN}${ICON_SUCCESS} [DRY RUN] Would disable Touch ID for sudo${NC}"
+            echo -e "${GREEN}${ICON_SUCCESS} [DRY RUN] $(t "Would disable Touch ID for sudo" "将禁用 Touch ID for sudo")${NC}"
             echo -e "${GRAY}${ICON_REVIEW} Target files: ${PAM_SUDO_FILE} and/or ${PAM_SUDO_LOCAL_FILE}${NC}"
         fi
         return 0
@@ -270,7 +270,7 @@ disable_touchid() {
         grep -v "pam_tid.so" "$PAM_SUDO_FILE" > "$temp_file"
 
         if secure_install_pam "$temp_file" "$PAM_SUDO_FILE" 2> /dev/null; then
-            echo -e "${GREEN}${ICON_SUCCESS} Touch ID disabled${NC}"
+            echo -e "${GREEN}${ICON_SUCCESS} $(t "Touch ID disabled" "Touch ID 已禁用")${NC}"
             echo ""
             return 0
         else

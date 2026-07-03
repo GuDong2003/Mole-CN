@@ -209,7 +209,7 @@ read_clean_sudo_password_remainder() {
 prompt_for_system_clean() {
     local prompt_attempt=0
     while true; do
-        echo -ne "${PURPLE}${ICON_ARROW}${NC} System caches need sudo. ${GREEN}Enter${NC} continue, ${GRAY}Space${NC} skip: "
+        echo -ne "${PURPLE}${ICON_ARROW}${NC} System caches need sudo. ${GREEN}$(t "Enter" "确认")${NC} continue, ${GRAY}$(t "Space" "空格")${NC} skip: "
 
         local choice
         choice=$(read_clean_sudo_choice)
@@ -222,7 +222,7 @@ prompt_for_system_clean() {
         fi
 
         if [[ "$choice" == "SPACE" ]]; then
-            echo -e " ${GRAY}Skipped${NC}"
+            echo -e " ${GRAY}$(t "Skipped" "已跳过")${NC}"
             echo ""
             SYSTEM_CLEAN=false
             break
@@ -230,12 +230,12 @@ prompt_for_system_clean() {
             printf "\r\033[K" # Clear the prompt line
             if ensure_sudo_session "System cleanup requires admin access"; then
                 SYSTEM_CLEAN=true
-                echo -e "${GREEN}${ICON_SUCCESS}${NC} Admin access granted"
+                echo -e "${GREEN}${ICON_SUCCESS}${NC} $(t "Admin access granted" "管理员权限已授予")"
                 echo ""
             else
                 SYSTEM_CLEAN=false
                 echo ""
-                echo -e "${YELLOW}Authentication failed${NC}, continuing with user-level cleanup"
+                echo -e "${YELLOW}$(t "Authentication failed" "认证失败")${NC}, continuing with user-level cleanup"
             fi
             break
         elif [[ "$choice" == CHAR:* ]]; then
@@ -247,12 +247,12 @@ prompt_for_system_clean() {
             printf "\r\033[K" # Clear the prompt line
             if ensure_sudo_session_with_password "$typed_password" "System cleanup requires admin access"; then
                 SYSTEM_CLEAN=true
-                echo -e "${GREEN}${ICON_SUCCESS}${NC} Admin access granted"
+                echo -e "${GREEN}${ICON_SUCCESS}${NC} $(t "Admin access granted" "管理员权限已授予")"
                 echo ""
             else
                 SYSTEM_CLEAN=false
                 echo ""
-                echo -e "${YELLOW}Authentication failed${NC}, continuing with user-level cleanup"
+                echo -e "${YELLOW}$(t "Authentication failed" "认证失败")${NC}, continuing with user-level cleanup"
             fi
             unset typed_password password_remainder
             break
@@ -261,7 +261,7 @@ prompt_for_system_clean() {
             drain_pending_input 0.05
             if [[ $prompt_attempt -ge 2 ]]; then
                 SYSTEM_CLEAN=false
-                echo -e " ${GRAY}Skipped${NC}"
+                echo -e " ${GRAY}$(t "Skipped" "已跳过")${NC}"
                 echo ""
                 break
             fi
@@ -318,7 +318,7 @@ end_section() {
     stop_section_spinner
 
     if [[ "${TRACK_SECTION:-0}" == "1" && "${SECTION_ACTIVITY:-0}" == "0" ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Nothing to clean"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $(t "Nothing to clean" "无可清理项")"
     fi
     TRACK_SECTION=0
 }
@@ -895,7 +895,7 @@ safe_clean() {
         if [[ "$DRY_RUN" == "true" ]]; then
             local size_display
             size_display=$(colorize_human_size "$size_human")
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $label${NC}, ${size_display} ${YELLOW}dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $label${NC}, ${size_display} ${YELLOW}$(t "dry" "预览")${NC}"
 
             local paths_temp
             paths_temp=$(create_temp_file)
@@ -948,7 +948,7 @@ safe_clean() {
                     local size_human
                     size_human=$(bytes_to_human "$((total_size * 1024))")
                     if [[ $child_count -gt 1 ]]; then
-                        echo "$display_path  # $size_human, $child_count items" >> "$EXPORT_LIST_FILE"
+                        echo "$display_path  # $size_human, $child_count $(t "items" "项")" >> "$EXPORT_LIST_FILE"
                     else
                         echo "$display_path  # $size_human" >> "$EXPORT_LIST_FILE"
                     fi
@@ -984,14 +984,14 @@ start_cleanup() {
         echo ""
 
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "${YELLOW}Dry Run Mode${NC}, Preview only, no deletions"
+            echo -e "${YELLOW}$(t "Dry Run Mode" "预览模式")${NC}, Preview only, no deletions"
             echo ""
         fi
         SYSTEM_CLEAN=false
         return 0
     fi
 
-    echo -e "${PURPLE_BOLD}Clean Your Mac${NC}"
+    echo -e "${PURPLE_BOLD}$(t "Clean Your Mac" "Clean Your Mac")${NC}"
     echo ""
 
     if [[ "$DRY_RUN" != "true" && -t 0 ]]; then
@@ -999,7 +999,7 @@ start_cleanup() {
     fi
 
     if [[ "$DRY_RUN" == "true" ]]; then
-        echo -e "${YELLOW}Dry Run Mode${NC}, Preview only, no deletions"
+        echo -e "${YELLOW}$(t "Dry Run Mode" "预览模式")${NC}, Preview only, no deletions"
         echo ""
 
         ensure_user_file "$EXPORT_LIST_FILE"
@@ -1067,7 +1067,7 @@ perform_cleanup() {
     if [[ -z "$EXTERNAL_VOLUME_TARGET" && "${MOLE_TEST_MODE:-0}" == "1" ]]; then
         test_mode_enabled=true
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "${YELLOW}Dry Run Mode${NC}, Preview only, no deletions"
+            echo -e "${YELLOW}$(t "Dry Run Mode" "预览模式")${NC}, Preview only, no deletions"
             echo ""
         fi
         echo -e "${GREEN}${ICON_LIST}${NC} User app cache"
@@ -1149,7 +1149,7 @@ perform_cleanup() {
             [[ $custom_count -gt 0 ]] && summary+="$custom_count custom"
             summary+=" patterns active"
 
-            echo -e "${BLUE}${ICON_SUCCESS}${NC} Whitelist: $summary"
+            echo -e "${BLUE}${ICON_SUCCESS}${NC} $(t "Whitelist:" "白名单：") $summary"
 
             if [[ "$DRY_RUN" == "true" ]]; then
                 for pattern in "${WHITELIST_PATTERNS[@]}"; do
@@ -1196,7 +1196,7 @@ perform_cleanup() {
         if [[ ${#WHITELIST_WARNINGS[@]} -gt 0 ]]; then
             echo ""
             for warning in "${WHITELIST_WARNINGS[@]}"; do
-                echo -e "  ${GRAY}${ICON_WARNING}${NC} Whitelist: $warning"
+                echo -e "  ${GRAY}${ICON_WARNING}${NC} $(t "Whitelist:" "白名单：") $warning"
             done
         fi
 
@@ -1437,7 +1437,7 @@ main() {
             "--external")
                 shift
                 if [[ $# -eq 0 ]]; then
-                    echo "Missing path for --external" >&2
+                    echo "$(t "Missing path for --external" "缺少 --external 路径参数")" >&2
                     exit 1
                 fi
                 EXTERNAL_VOLUME_TARGET=$(validate_external_volume_target "$1") || exit 1
@@ -1453,13 +1453,13 @@ main() {
                 exit 1
                 ;;
             -*)
-                echo "Unknown option for mo clean: $1" >&2
-                echo "Run 'mo clean --help' for usage." >&2
+                echo "$(t "Unknown option for mo clean:" "mo clean 未知选项：") $1" >&2
+                echo "$(t "Run 'mo clean --help' for usage." "运行 'mo clean --help' 查看用法。")" >&2
                 exit 1
                 ;;
             *)
-                echo "Unexpected argument for mo clean: $1" >&2
-                echo "Run 'mo clean --help' for usage." >&2
+                echo "$(t "Unexpected argument for mo clean:" "mo clean 意外参数：") $1" >&2
+                echo "$(t "Run 'mo clean --help' for usage." "运行 'mo clean --help' 查看用法。")" >&2
                 exit 1
                 ;;
         esac

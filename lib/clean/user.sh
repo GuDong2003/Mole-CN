@@ -1161,11 +1161,11 @@ validate_external_volume_target() {
         return 1
     fi
     if [[ "$target" == "$root" || "$target" == "$resolved_root" ]]; then
-        echo "Refusing to clean the volumes root directly: $resolved_root" >&2
+        echo "$(t "Refusing to clean the volumes root directly:" "拒绝直接清理卷根目录：") $resolved_root" >&2
         return 1
     fi
     if [[ -L "$target" ]]; then
-        echo "Refusing to clean symlinked volume path: $target" >&2
+        echo "$(t "Refusing to clean symlinked volume path:" "拒绝清理符号链接卷路径：") $target" >&2
         return 1
     fi
 
@@ -1190,7 +1190,7 @@ validate_external_volume_target() {
     disk_info=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" command diskutil info "$resolved" 2> /dev/null || echo "")
     if [[ -n "$disk_info" ]]; then
         if echo "$disk_info" | grep -Eq 'Internal:[[:space:]]+Yes'; then
-            echo "Refusing to clean an internal volume: $resolved" >&2
+            echo "$(t "Refusing to clean an internal volume:" "拒绝清理内部卷：") $resolved" >&2
             return 1
         fi
 
@@ -1198,7 +1198,7 @@ validate_external_volume_target() {
         protocol=$(echo "$disk_info" | awk -F: '/Protocol:/ {gsub(/^[[:space:]]+/, "", $2); print $2; exit}')
         case "$protocol" in
             SMB | NFS | AFP | CIFS | WebDAV)
-                echo "Refusing to clean network volume protocol $protocol: $resolved" >&2
+                echo "$(t "Refusing to clean network volume protocol" "拒绝清理网络卷协议") $protocol: $resolved" >&2
                 return 1
                 ;;
         esac

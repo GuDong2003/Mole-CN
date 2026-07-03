@@ -1386,7 +1386,7 @@ execute_optimization() {
         coreduet_cleanup) opt_coreduet_cleanup ;;
         login_items_audit) opt_login_items_audit ;;
         *)
-            echo -e "${YELLOW}${ICON_ERROR}${NC} Unknown action: $action"
+            echo -e "${YELLOW}${ICON_ERROR}${NC} $(t "Unknown action:" "未知操作：")$action"
             return 1
             ;;
     esac

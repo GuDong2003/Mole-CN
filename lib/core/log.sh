@@ -354,11 +354,11 @@ log_system_info() {
 
         # Check sudo status non-interactively (skip in test mode)
         if [[ "${MOLE_TEST_MODE:-0}" == "1" || "${MOLE_TEST_NO_AUTH:-0}" == "1" ]]; then
-            echo "Sudo Access: Skipped (test mode)"
+            echo "$(t "Sudo Access: Skipped (test mode)" "Sudo 访问：已跳过（测试模式）")"
         elif sudo -n true 2> /dev/null; then
-            echo "Sudo Access: Active"
+            echo "$(t "Sudo Access: Active" "Sudo 访问：活跃")"
         else
-            echo "Sudo Access: Required"
+            echo "$(t "Sudo Access: Required" "Sudo 访问：需要")"
         fi
         echo "----------------------------------------------------------------------"
     } >> "$DEBUG_LOG_FILE" 2> /dev/null || true

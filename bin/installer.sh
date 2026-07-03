@@ -155,7 +155,7 @@ get_source_display() {
         "$HOME/Public"*) echo "Public" ;;
         "$HOME/Library/Downloads"*) echo "Library" ;;
         "/Users/Shared"*) echo "Shared" ;;
-        "$HOME/Library/Caches/Homebrew"*) echo "Homebrew" ;;
+        "$HOME/Library/Caches/Homebrew"*) echo "$(t "Homebrew" "Homebrew")" ;;
         "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Downloads"*) echo "iCloud" ;;
         "$HOME/Library/Containers/com.apple.mail"*) echo "Mail" ;;
         *"Telegram Desktop"*) echo "Telegram" ;;
@@ -240,7 +240,7 @@ collect_installers() {
 
     if [[ ${#all_files[@]} -eq 0 ]]; then
         if [[ "${IN_ALT_SCREEN:-0}" != "1" ]]; then
-            echo -e "${GREEN}${ICON_SUCCESS}${NC} Great! No installer files to clean"
+            echo -e "${GREEN}${ICON_SUCCESS}${NC} $(t "Great! No installer files to clean" "很好！没有需要清理的安装文件")"
         fi
         return 1
     fi
@@ -678,7 +678,7 @@ delete_selected_installers() {
 
     # Confirm deletion
     echo ""
-    echo -ne "${PURPLE}${ICON_ARROW}${NC} Delete ${#INSTALLER_DELETE_PATHS[@]} installers, ${confirm_human}  ${GREEN}Enter${NC} confirm, ${GRAY}ESC${NC} cancel: "
+    echo -ne "${PURPLE}${ICON_ARROW}${NC} Delete ${#INSTALLER_DELETE_PATHS[@]} installers, ${confirm_human}  ${GREEN}$(t "Enter" "确认")${NC} confirm, ${GRAY}ESC${NC} cancel: "
 
     IFS= read -r -s -n1 confirm || confirm=""
     case "$confirm" in
@@ -725,7 +725,7 @@ perform_installers() {
             IN_ALT_SCREEN=0
         fi
         printf '\n'
-        echo -e "${GREEN}${ICON_SUCCESS}${NC} Great! No installer files to clean"
+        echo -e "${GREEN}${ICON_SUCCESS}${NC} $(t "Great! No installer files to clean" "很好！没有需要清理的安装文件")"
         printf '\n'
         return 2 # Nothing to clean
     fi
@@ -822,14 +822,14 @@ main() {
                 export MOLE_DRY_RUN=1
                 ;;
             *)
-                echo "Unknown option: $arg"
+                echo "$(t "Unknown option:" "未知选项：") $arg"
                 exit 1
                 ;;
         esac
     done
 
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
-        echo -e "${YELLOW}${ICON_DRY_RUN} DRY RUN MODE${NC}, No installer files will be removed"
+        echo -e "${YELLOW}${ICON_DRY_RUN} $(t "DRY RUN MODE" "预览模式")${NC}, No installer files will be removed"
         printf '\n'
     fi
 
