@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
+	"github.com/tw93/mole/internal/i18n"
 	"github.com/tw93/mole/internal/units"
 )
 
@@ -146,10 +147,10 @@ func renderHeader(m MetricsSnapshot, errMsg string, animFrame int, termWidth int
 	}
 	compactHeader := termWidth <= 80
 
-	title := titleStyle.Render("Status")
+	title := titleStyle.Render(i18n.T("Status", "系统状态"))
 
 	scoreStyle := getScoreStyle(m.HealthScore)
-	scoreText := subtleStyle.Render("Health ") + scoreStyle.Render(fmt.Sprintf("● %d", m.HealthScore))
+	scoreText := subtleStyle.Render(i18n.T("Health ", "健康 ")) + scoreStyle.Render(fmt.Sprintf("● %d", m.HealthScore))
 	if errMsg == "" {
 		diagnosis := statusDiagnosisLine(m)
 		scoreText += " " + subtleStyle.Render(diagnosis)
@@ -190,7 +191,7 @@ func renderHeader(m MetricsSnapshot, errMsg string, animFrame int, termWidth int
 		optionalInfoParts = append(optionalInfoParts, m.Hardware.OSVersion)
 	}
 	if !compactHeader && m.Uptime != "" {
-		uptimeText := "up " + m.Uptime
+		uptimeText := i18n.T("up ", "已运行 ") + m.Uptime
 		switch uptimeSeverity(m.UptimeSeconds) {
 		case "danger":
 			uptimeText = dangerStyle.Render(uptimeText + " ↻")
@@ -236,9 +237,9 @@ func renderHeader(m MetricsSnapshot, errMsg string, animFrame int, termWidth int
 
 	if errMsg != "" {
 		if mole == "" {
-			return lipgloss.JoinVertical(lipgloss.Left, headerLine, "", dangerStyle.Render("ERROR: "+errMsg)), ""
+			return lipgloss.JoinVertical(lipgloss.Left, headerLine, "", dangerStyle.Render(i18n.T("ERROR: ", "错误：")+errMsg)), ""
 		}
-		return lipgloss.JoinVertical(lipgloss.Left, headerLine, "", mole, dangerStyle.Render("ERROR: "+errMsg)), ""
+		return lipgloss.JoinVertical(lipgloss.Left, headerLine, "", mole, dangerStyle.Render(i18n.T("ERROR: ", "错误：")+errMsg)), ""
 	}
 	if mole == "" {
 		return headerLine, ""
