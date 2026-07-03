@@ -12,6 +12,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	"github.com/tw93/mole/internal/i18n"
 )
 
 const (
@@ -23,6 +25,7 @@ const (
 var (
 	// Command-line flags
 	jsonOutput       = flag.Bool("json", false, "output metrics as JSON instead of TUI")
+	cnMode           = flag.Bool("cn", false, "use Chinese UI")
 	procCPUThreshold = flag.Float64("proc-cpu-threshold", 100, "alert when a process stays above this CPU percent")
 	procCPUWindow    = flag.Duration("proc-cpu-window", 5*time.Minute, "continuous duration a process must exceed the CPU threshold")
 	procCPUAlerts    = flag.Bool("proc-cpu-alerts", true, "enable persistent high-CPU process alerts")
@@ -363,6 +366,9 @@ func parseWatchInterval(raw string) (time.Duration, error) {
 
 func main() {
 	flag.Parse()
+	if *cnMode {
+		i18n.Locale = "zh"
+	}
 	if err := validateFlags(); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(2)

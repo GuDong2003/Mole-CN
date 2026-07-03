@@ -14,14 +14,21 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/tw93/mole/internal/i18n"
 )
 
 var (
 	jsonMode = flag.Bool("json", false, "output analysis as JSON instead of TUI")
+	cnMode   = flag.Bool("cn", false, "use Chinese UI")
 )
 
 func main() {
 	flag.Parse()
+
+	if *cnMode {
+		i18n.Locale = "zh"
+	}
 
 	target := os.Getenv("MO_ANALYZE_PATH")
 	if target == "" && len(flag.Args()) > 0 {

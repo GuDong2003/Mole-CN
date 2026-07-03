@@ -43,13 +43,14 @@ mole_dispatch_history_early() {
 mole_dispatch_history_early "$@"
 
 source "$SCRIPT_DIR/lib/core/common.sh"
+source "$SCRIPT_DIR/lib/core/i18n.sh"
 source "$SCRIPT_DIR/lib/core/commands.sh"
 
 trap cleanup_temp_files EXIT INT TERM
 
 # Version and update helpers
 VERSION="1.44.1"
-MOLE_TAGLINE="Deep clean and optimize your Mac."
+MOLE_TAGLINE=$(t "Deep clean and optimize your Mac." "深度清理与优化你的 Mac。")
 
 is_touchid_configured() {
     grep -q "pam_tid.so" /etc/pam.d/sudo /etc/pam.d/sudo_local 2> /dev/null
@@ -362,8 +363,8 @@ show_version() {
 show_help() {
     show_brand_banner
     echo
-    printf "%s%s%s\n" "$BLUE" "COMMANDS" "$NC"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo" "$NC" "Main menu"
+    printf "%s%s%s\n" "$BLUE" "$(t "COMMANDS" "命令")" "$NC"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo" "$NC" "$(t "Main menu" "主菜单")"
     for entry in "${MOLE_COMMANDS[@]}"; do
         local name="${entry%%:*}"
         local desc="${entry#*:}"
@@ -373,25 +374,24 @@ show_help() {
         printf "  %s%-28s%s %s\n" "$GREEN" "$display" "$NC" "$desc"
     done
     echo
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --dry-run" "$NC" "Preview cleanup"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --whitelist" "$NC" "Manage protected caches"
-
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --dry-run" "$NC" "Preview optimization"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --whitelist" "$NC" "Manage protected items"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo uninstall --dry-run" "$NC" "Preview app uninstall"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo history --json" "$NC" "Export cleanup history"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --dry-run" "$NC" "Preview project purge"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo installer --dry-run" "$NC" "Preview installer cleanup"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo touchid enable --dry-run" "$NC" "Preview Touch ID setup"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo completion --dry-run" "$NC" "Preview shell completion edits"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --paths" "$NC" "Configure scan directories"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo analyze /Volumes" "$NC" "Analyze external drives only"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --force" "$NC" "Force reinstall latest stable version"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --nightly" "$NC" "Install latest unreleased main branch build"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --dry-run" "$NC" "$(t "Preview cleanup" "预览清理")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --whitelist" "$NC" "$(t "Manage protected caches" "管理受保护的缓存")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --dry-run" "$NC" "$(t "Preview optimization" "预览优化")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --whitelist" "$NC" "$(t "Manage protected items" "管理受保护的项目")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo uninstall --dry-run" "$NC" "$(t "Preview app uninstall" "预览卸载")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo history --json" "$NC" "$(t "Export cleanup history" "导出清理历史")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --dry-run" "$NC" "$(t "Preview project purge" "预览项目清理")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo installer --dry-run" "$NC" "$(t "Preview installer cleanup" "预览安装包清理")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo touchid enable --dry-run" "$NC" "$(t "Preview Touch ID setup" "预览 Touch ID 设置")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo completion --dry-run" "$NC" "$(t "Preview shell completion edits" "预览补全设置")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --paths" "$NC" "$(t "Configure scan directories" "配置扫描目录")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo analyze /Volumes" "$NC" "$(t "Analyze external drives only" "仅分析外置磁盘")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --force" "$NC" "$(t "Force reinstall latest stable version" "强制重装最新稳定版")"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --nightly" "$NC" "$(t "Install latest unreleased main branch build" "安装最新开发版")"
     printf "  %s%-28s%s %s\n" "$GREEN" "mo remove --dry-run" "$NC" "Preview Mole removal"
     echo
     printf "%s%s%s\n" "$BLUE" "OPTIONS" "$NC"
-    printf "  %s%-28s%s %s\n" "$GREEN" "--debug" "$NC" "Show detailed operation logs"
+    printf "  %s%-28s%s %s\n" "$GREEN" "--debug" "$NC" "$(t "Show detailed operation logs" "显示详细操作日志")"
     echo
 }
 
@@ -921,21 +921,21 @@ show_main_menu() {
 
     printf '\r\033[2K\n'
 
-    printf '\r\033[2K%s\n' "$(show_menu_option 1 "Clean        Free up disk space" "$([[ $selected -eq 1 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 2 "Uninstall    Remove apps completely" "$([[ $selected -eq 2 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 3 "Optimize     Refresh caches and services" "$([[ $selected -eq 3 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 4 "Analyze      Explore disk usage" "$([[ $selected -eq 4 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 5 "Status       Monitor system health" "$([[ $selected -eq 5 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 1 "$(t "Clean        Free up disk space" "清理        释放磁盘空间")" "$([[ $selected -eq 1 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 2 "$(t "Uninstall    Remove apps completely" "卸载        彻底删除应用")" "$([[ $selected -eq 2 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 3 "$(t "Optimize     Refresh caches and services" "优化        刷新缓存与服务")" "$([[ $selected -eq 3 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 4 "$(t "Analyze      Explore disk usage" "磁盘分析    可视化磁盘占用")" "$([[ $selected -eq 4 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 5 "$(t "Status       Monitor system health" "系统状态    实时系统监控")" "$([[ $selected -eq 5 ]] && echo true || echo false)")"
 
     if [[ -t 0 ]]; then
         printf '\r\033[2K\n'
-        local controls="${GRAY}↑↓  |  Enter  |  M More  |  V Version"
+        local controls="${GRAY}$(t "↑↓  |  Enter  |  M More  |  V Version" "↑↓  选择  |  Enter 确认  |  M 更多  |  V 版本")"
         if ! is_touchid_configured; then
-            controls="${controls}  |  T TouchID"
+            controls="${controls}  |  $(t "T TouchID" "T TouchID")"
         elif [[ "${MAIN_MENU_SHOW_UPDATE:-false}" == "true" ]]; then
-            controls="${controls}  |  U Update"
+            controls="${controls}  |  $(t "U Update" "U 更新")"
         fi
-        controls="${controls}  |  Q Quit${NC}"
+        controls="${controls}  |  $(t "Q Quit" "Q 退出")${NC}"
         printf '\r\033[2K%s\n' "$controls"
         printf '\r\033[2K\n'
     fi
@@ -1075,6 +1075,17 @@ main() {
             ;;
         "completion")
             exec "$SCRIPT_DIR/bin/completion.sh" "${args[@]:1}"
+            ;;
+        "lang")
+            if [[ "${args[1]:-}" == "zh" || "${args[1]:-}" == "en" ]]; then
+                mo_set_lang "${args[1]}"
+            elif [[ -z "${args[1]:-}" || "${args[1]:-}" == "status" || "${args[1]:-}" == "show" ]]; then
+                mo_show_lang
+            else
+                echo "Usage: mo lang [zh|en]" >&2
+                exit 1
+            fi
+            exit 0
             ;;
         "update")
             local force_update=false
