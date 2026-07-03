@@ -39,7 +39,7 @@ func (m model) View() string {
 			}
 		} else {
 			if hasPendingOverviewEntries(m.entries) {
-				fmt.Fprintf(&b, "%sSelect a location to explore:%s  ", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s%s%s  ", colorGray, i18n.T("Select a location to explore:", "选择要扫描的位置："), colorReset)
 				fmt.Fprintf(&b, "%s%s%s%s %s\n\n", colorCyan, colorBold, spinnerFrames[m.spinner], colorReset, m.status)
 			} else {
 				fmt.Fprintf(&b, "%s%s%s\n\n", colorGray, i18n.T("Select a location to explore:", "选择要扫描的位置："), colorReset)
@@ -344,41 +344,41 @@ func (m model) View() string {
 	fmt.Fprintln(&b)
 	if m.inOverviewMode() {
 		if len(m.history) > 0 {
-			fmt.Fprintf(&b, "%s↑↓←→ | Enter | R Refresh | O Open | P Preview | F File | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("↑↓←→ | Enter | R Refresh | O Open | P Preview | F File | Esc Back | Q/Ctrl+C Quit", "↑↓←→ | Enter 确认 | R 刷新 | O 打开 | P 预览 | F 文件 | Esc 返回 | Q/Ctrl+C 退出"), colorReset)
 		} else {
-			fmt.Fprintf(&b, "%s↑↓→ | Enter | R Refresh | O Open | P Preview | F File | Esc/Q Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("↑↓→ | Enter | R Refresh | O Open | P Preview | F File | Esc/Q Quit", "↑↓→ | Enter 确认 | R 刷新 | O 打开 | P 预览 | F 文件 | Esc/Q 退出"), colorReset)
 		}
 	} else if m.showLargeFiles {
 		if m.largeFiltering {
-			fmt.Fprintf(&b, "%sType to filter  |  Enter Apply  |  Esc Clear  |  Ctrl+C Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("Type to filter  |  Enter Apply  |  Esc Clear  |  Ctrl+C Quit", "输入筛选  |  Enter 应用  |  Esc 清除  |  Ctrl+C 退出"), colorReset)
 		} else if m.largeFilter != "" {
-			fmt.Fprintf(&b, "%s↑↓← | Space Select | / Edit | Esc Clear filter | O Open | P Preview | F File | ⌫ Del | Q Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("↑↓← | Space Select | / Edit | Esc Clear filter | O Open | P Preview | F File | ⌫ Del | Q Quit", "↑↓← | 空格 选择 | / 编辑 | Esc 清除筛选 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | Q 退出"), colorReset)
 		} else {
 			selectCount := len(m.largeMultiSelected)
 			if selectCount > 0 {
-				fmt.Fprintf(&b, "%s↑↓← | Space Select | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, selectCount, colorReset)
+				fmt.Fprintf(&b, "%s%s%s\n", colorGray, fmt.Sprintf(i18n.T("↑↓← | Space Select | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | Esc Back | Q/Ctrl+C Quit", "↑↓← | 空格 选择 | / 筛选 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 %d | Esc 返回 | Q/Ctrl+C 退出"), selectCount), colorReset)
 			} else {
-				fmt.Fprintf(&b, "%s↑↓← | Space Select | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("↑↓← | Space Select | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del | Esc Back | Q/Ctrl+C Quit", "↑↓← | 空格 选择 | / 筛选 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | Esc 返回 | Q/Ctrl+C 退出"), colorReset)
 			}
 		}
 	} else if m.entryFiltering {
-		fmt.Fprintf(&b, "%sType to filter  |  Enter Apply  |  Esc Clear  |  Ctrl+C Quit%s\n", colorGray, colorReset)
+		fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("Type to filter  |  Enter Apply  |  Esc Clear  |  Ctrl+C Quit", "输入筛选  |  Enter 应用  |  Esc 清除  |  Ctrl+C 退出"), colorReset)
 	} else if m.entryFilter != "" {
-		fmt.Fprintf(&b, "%s↑↓←→ | Enter | Space Select | / Edit | Esc Clear filter | O Open | P Preview | F File | ⌫ Del | Q Quit%s\n", colorGray, colorReset)
+		fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("↑↓←→ | Enter | Space Select | / Edit | Esc Clear filter | O Open | P Preview | F File | ⌫ Del | Q Quit", "↑↓←→ | Enter 确认 | 空格 选择 | / 编辑 | Esc 清除筛选 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | Q 退出"), colorReset)
 	} else {
 		largeFileCount := len(m.largeFiles)
 		selectCount := len(m.multiSelected)
 		if selectCount > 0 {
 			if largeFileCount > 0 {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | T Top %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, selectCount, largeFileCount, colorReset)
+				fmt.Fprintf(&b, "%s%s%s\n", colorGray, fmt.Sprintf(i18n.T("↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | T Top %d | Esc Back | Q/Ctrl+C Quit", "↑↓←→ | 空格 选择 | Enter 确认 | / 筛选 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 %d | T 大文件 %d | Esc 返回 | Q/Ctrl+C 退出"), selectCount, largeFileCount), colorReset)
 			} else {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, selectCount, colorReset)
+				fmt.Fprintf(&b, "%s%s%s\n", colorGray, fmt.Sprintf(i18n.T("↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | Esc Back | Q/Ctrl+C Quit", "↑↓←→ | 空格 选择 | Enter 确认 | / 筛选 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 %d | Esc 返回 | Q/Ctrl+C 退出"), selectCount), colorReset)
 			}
 		} else {
 			if largeFileCount > 0 {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del | T Top %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, largeFileCount, colorReset)
+				fmt.Fprintf(&b, "%s%s%s\n", colorGray, fmt.Sprintf(i18n.T("↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del | T Top %d | Esc Back | Q/Ctrl+C Quit", "↑↓←→ | 空格 选择 | Enter 确认 | / 筛选 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | T 大文件 %d | Esc 返回 | Q/Ctrl+C 退出"), largeFileCount), colorReset)
 			} else {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s%s%s\n", colorGray, i18n.T("↑↓←→ | Space Select | Enter | / Filter | R Refresh | O Open | P Preview | F File | ⌫ Del | Esc Back | Q/Ctrl+C Quit", "↑↓←→ | 空格 选择 | Enter 确认 | / 筛选 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | Esc 返回 | Q/Ctrl+C 退出"), colorReset)
 			}
 		}
 	}
