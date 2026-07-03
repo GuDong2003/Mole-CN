@@ -209,7 +209,7 @@ read_clean_sudo_password_remainder() {
 prompt_for_system_clean() {
     local prompt_attempt=0
     while true; do
-        echo -ne "${PURPLE}${ICON_ARROW}${NC} System caches need sudo. ${GREEN}$(t "Enter" "确认")${NC} continue, ${GRAY}$(t "Space" "空格")${NC} skip: "
+        echo -ne "${PURPLE}${ICON_ARROW}${NC} $(t "System caches need sudo." "系统缓存需要管理员权限。") ${GREEN}$(t "Enter" "确认")${NC} $(t "continue," "继续，") ${GRAY}$(t "Space" "空格")${NC} $(t "skip:" "跳过：")"
 
         local choice
         choice=$(read_clean_sudo_choice)
