@@ -990,8 +990,8 @@ interactive_main_menu() {
                     1) launch_menu_command "$SCRIPT_DIR/bin/clean.sh" ;;
                     2) launch_menu_command "$SCRIPT_DIR/bin/uninstall.sh" ;;
                     3) launch_menu_command "$SCRIPT_DIR/bin/optimize.sh" ;;
-                    4) launch_menu_command "$SCRIPT_DIR/bin/analyze.sh" ;;
-                    5) launch_menu_command "$SCRIPT_DIR/bin/status.sh" ;;
+                    4) is_cn && launch_menu_command "$SCRIPT_DIR/bin/analyze.sh" "-cn" || launch_menu_command "$SCRIPT_DIR/bin/analyze.sh" ;;
+                    5) is_cn && launch_menu_command "$SCRIPT_DIR/bin/status.sh" "-cn" || launch_menu_command "$SCRIPT_DIR/bin/status.sh" ;;
                 esac
                 ;;
             "CHAR:1")
@@ -1004,10 +1004,10 @@ interactive_main_menu() {
                 launch_menu_command "$SCRIPT_DIR/bin/optimize.sh"
                 ;;
             "CHAR:4")
-                launch_menu_command "$SCRIPT_DIR/bin/analyze.sh"
+                is_cn && launch_menu_command "$SCRIPT_DIR/bin/analyze.sh" "-cn" || launch_menu_command "$SCRIPT_DIR/bin/analyze.sh"
                 ;;
             "CHAR:5")
-                launch_menu_command "$SCRIPT_DIR/bin/status.sh"
+                is_cn && launch_menu_command "$SCRIPT_DIR/bin/status.sh" "-cn" || launch_menu_command "$SCRIPT_DIR/bin/status.sh"
                 ;;
             "MORE")
                 show_cursor
@@ -1059,10 +1059,18 @@ main() {
             exec "$SCRIPT_DIR/bin/uninstall.sh" "${args[@]:1}"
             ;;
         "analyze" | "analyse")
-            exec "$SCRIPT_DIR/bin/analyze.sh" "${args[@]:1}"
+            if is_cn; then
+                exec "$SCRIPT_DIR/bin/analyze.sh" "-cn" "${args[@]:1}"
+            else
+                exec "$SCRIPT_DIR/bin/analyze.sh" "${args[@]:1}"
+            fi
             ;;
         "status")
-            exec "$SCRIPT_DIR/bin/status.sh" "${args[@]:1}"
+            if is_cn; then
+                exec "$SCRIPT_DIR/bin/status.sh" "-cn" "${args[@]:1}"
+            else
+                exec "$SCRIPT_DIR/bin/status.sh" "${args[@]:1}"
+            fi
             ;;
         "purge")
             exec "$SCRIPT_DIR/bin/purge.sh" "${args[@]:1}"
